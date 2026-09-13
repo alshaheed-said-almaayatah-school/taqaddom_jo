@@ -1,1 +1,217 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0e1116" />
+  <title>المنهج — منصة تقدّم</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+</head>
+<body>
 
+  <header class="header">
+    <div class="container header-inner">
+      <a href="../dashboard.html" class="brand">
+        <span class="brand-logo">ت</span>
+        <span>المنهج<small>الفصل الأول</small></span>
+      </a>
+      <div class="row">
+        <button class="icon-btn" data-theme-toggle>🌙</button>
+        <a href="profile.html" class="icon-btn">👤</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container section">
+
+    <!-- البحث -->
+    <section class="card mb-3">
+      <input type="search" id="searchInput" class="search-input"
+             placeholder="ابحث عن مادة، وحدة، أو درس…" autocomplete="off" />
+      <div id="searchResults" class="search-results hidden"></div>
+    </section>
+
+    <!-- ملخص سريع -->
+    <section class="row-between mb-3">
+      <h1>📚 كل المواد</h1>
+      <span class="badge info" id="curriculumMeta">—</span>
+    </section>
+
+    <!-- قائمة المواد -->
+    <div id="subjectsContainer" class="subject-detail-list"></div>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="../dashboard.html" data-nav><span class="nav-ico">🏠</span>الرئيسية</a>
+    <a href="subjects.html" data-nav><span class="nav-ico">📚</span>المنهج</a>
+    <a href="stats.html" data-nav><span class="nav-ico">📊</span>الإحصائيات</a>
+    <a href="focus.html" data-nav><span class="nav-ico">🧠</span>تركيز</a>
+    <a href="profile.html" data-nav><span class="nav-ico">👤</span>حسابي</a>
+  </nav>
+
+  <script src="../data.js"></script>
+  <script src="../js/store.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/curriculum.js"></script>
+  <script src="../js/progress.js"></script>
+  <script src="../js/app.js"></script>
+
+  <script>
+    (function () {
+      const user = Auth.requireAuth();
+      if (!user) return;
+
+      const stats = Curriculum.getStats();
+      UI.el('#curriculumMeta').textContent =
+        `${stats.totalSubjects} مواد · ${stats.totalUnits} وحدة · ${stats.totalLessons} درسًا`;
+
+      /* ---------- عرض المواد ---------- */
+      const renderSubjects = () => {
+        const subjects = Curriculum.getSubjects();
+        const root = UI.el('#subjectsContainer');
+
+        root.innerHTML = subjects.map(sub => {
+          const sc = Progress.subjectCounts(sub.id);
+          return `
+            <section class="subject-block card" id="s-${sub.id}">
+              <header class="subject-head" data-toggle-subject>
+                <div class="grow">
+                  <div class="row-between">
+                    <h2 class="mb-0">${UI.escape(sub.name)}</h2>
+                    <span class="badge ${sc.percent === 100 ? 'success' : sc.percent > 0 ? 'info' : ''}">
+                      ${sc.percent}%
+                    </span>
+                  </div>
+                  <p class="tiny mt-1">
+                    ${sub.unitsCount} وحدات · ${sub.lessonsCount} درسًا
+                    · ✓ ${sc.done} · ◐ ${sc.inprogress} · ○ ${sc.notstarted}
+                  </p>
+                  <div class="progress mt-1"><span style="width:${sc.percent}%"></span></div>
+                </div>
+              </header>
+
+              <div class="units-list" hidden>
+                ${sub.units.map(u => {
+                  const uc = Progress.unitCounts(sub.id, u.unit_number);
+                  return `
+                    <div class="unit-block">
+                      <div class="unit-head">
+                        <div class="row-between">
+                          <strong>الوحدة ${u.unit_number}: ${UI.escape(u.name)}</strong>
+                          <span class="badge ${uc.percent === 100 ? 'success' : uc.percent > 0 ? 'info' : ''}">
+                            ${uc.percent}%
+                          </span>
+                        </div>
+                        <div class="progress mt-1"><span style="width:${uc.percent}%"></span></div>
+                      </div>
+                      <ul class="lessons-mini">
+                        ${u.lessons.map(l => {
+                          const st = Progress.getStatus(l.lesson_id);
+                          const cls = st === 'done' ? 'done' : st === 'inprogress' ? 'inp' : '';
+                          const ico = st === 'done' ? '✓' : st === 'inprogress' ? '◐' : '○';
+                          return `
+                            <li class="lesson-mini ${cls}">
+                              <a href="lesson.html?id=${encodeURIComponent(l.lesson_id)}">
+                                <span class="lm-ico">${ico}</span>
+                                <span class="lm-name">${UI.escape(l.lesson_name)}</span>
+                              </a>
+                            </li>`;
+                        }).join('')}
+                      </ul>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </section>
+          `;
+        }).join('');
+
+        // فتح/إغلاق المواد
+        UI.els('[data-toggle-subject]').forEach(head => {
+          head.addEventListener('click', () => {
+            const block = head.closest('.subject-block');
+            const list = block.querySelector('.units-list');
+            list.hidden = !list.hidden;
+            block.classList.toggle('open', !list.hidden);
+          });
+        });
+
+        // فتح المادة إذا في الـ hash
+        if (location.hash.startsWith('#s-')) {
+          const el = document.querySelector(location.hash);
+          if (el) {
+            el.querySelector('.units-list').hidden = false;
+            el.classList.add('open');
+            setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+          }
+        }
+      };
+
+      /* ---------- البحث ---------- */
+      const bindSearch = () => {
+        const input = UI.el('#searchInput');
+        const box   = UI.el('#searchResults');
+
+        input.addEventListener('input', () => {
+          const q = input.value.trim();
+          if (!q) { box.classList.add('hidden'); box.innerHTML = ''; return; }
+
+          const res = Curriculum.search(q, 25);
+          const has = res.subjects.length || res.lessons.length;
+          box.classList.remove('hidden');
+
+          if (!has) {
+            box.innerHTML = `<p class="tiny muted">لا نتائج مطابقة.</p>`;
+            return;
+          }
+
+          const subjectHits = res.subjects.map(s =>
+            `<div class="sr-item" data-subject="${s.id}">
+               <span class="sr-ico">📚</span>
+               <span>${UI.escape(s.name)}</span>
+               <span class="tiny">مادة</span>
+             </div>`
+          ).join('');
+
+          const lessonHits = res.lessons.map(l =>
+            `<a class="sr-item" href="lesson.html?id=${encodeURIComponent(l.lesson_id)}">
+               <span class="sr-ico">📘</span>
+               <span>${UI.escape(l.lesson_name)}</span>
+               <span class="tiny">${UI.escape(l.subject_name)} · و${l.unit_number}</span>
+             </a>`
+          ).join('');
+
+          box.innerHTML = subjectHits + lessonHits;
+
+          UI.els('[data-subject]', box).forEach(el => {
+            el.addEventListener('click', () => {
+              const id = el.dataset.subject;
+              const target = document.querySelector(`#s-${id}`);
+              if (!target) return;
+              target.querySelector('.units-list').hidden = false;
+              target.classList.add('open');
+              box.classList.add('hidden');
+              input.value = '';
+              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+          });
+        });
+
+        // إغلاق عند الضغط خارج
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('#searchInput') && !e.target.closest('#searchResults')) {
+            box.classList.add('hidden');
+          }
+        });
+      };
+
+      renderSubjects();
+      bindSearch();
+    })();
+  </script>
+</body>
+</html>
