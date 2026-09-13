@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0e1116" />
+  <title>المجتمع — منصة تقدّم</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+</head>
+<body>
+
+  <header class="header">
+    <div class="container header-inner">
+      <a href="../dashboard.html" class="brand">
+        <span class="brand-logo">ت</span>
+        <span>مجتمع جيل 2011<small>Telegram</small></span>
+      </a>
+      <div class="row">
+        <button class="icon-btn" data-theme-toggle>🌙</button>
+        <a href="profile.html" class="icon-btn">👤</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container section">
+
+    <section class="card community-hero mb-3">
+      <span class="comm-ico">💬</span>
+      <h1>مجتمع جيل 2011</h1>
+      <p class="muted">
+        قناة Telegram الرسمية لمجتمع طلاب الصف العاشر.
+        مكان للتواصل، الأسئلة، مشاركة الملفات، والمتابعة الجماعية.
+      </p>
+      <a id="tgLink" target="_blank" rel="noopener" class="btn primary mt-2">
+        انضم إلى القناة على Telegram →
+      </a>
+    </section>
+
+    <h2 class="mb-2">📌 ماذا تجد في القناة؟</h2>
+
+    <div class="feature-grid" style="padding:0">
+      <div class="feature">
+        <div class="ico">📢</div>
+        <h3>إعلانات مهمة</h3>
+        <p>تنبيهات عن الاختبارات، المواعيد، والمواد الجديدة.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">❓</div>
+        <h3>أسئلة وأجوبة</h3>
+        <p>اسأل عن أي درس وستجد من يساعدك من زملائك.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">📎</div>
+        <h3>ملفات ومصادر</h3>
+        <p>ملخصات، أوراق عمل، وشروحات يشاركها المجتمع.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">🤝</div>
+        <h3>متابعة جماعية</h3>
+        <p>شجّع نفسك مع من يدرس نفس المنهج في نفس الوقت.</p>
+      </div>
+    </div>
+
+    <section class="card mt-3">
+      <h2 class="mb-2">📋 قواعد بسيطة</h2>
+      <ul class="rules-list">
+        <li>احترم الجميع — لا سخرية ولا تنمّر.</li>
+        <li>لا محتوى خارج الدراسة.</li>
+        <li>الأسئلة في الموضوع المخصص لها.</li>
+        <li>لا روابط مشبوهة أو إعلانات.</li>
+        <li>مشاركة المصادر مرحّب بها — بشرط أن تكون مفيدة.</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="../dashboard.html" data-nav><span class="nav-ico">🏠</span>الرئيسية</a>
+    <a href="subjects.html" data-nav><span class="nav-ico">📚</span>المنهج</a>
+    <a href="stats.html" data-nav><span class="nav-ico">📊</span>الإحصائيات</a>
+    <a href="focus.html" data-nav><span class="nav-ico">🧠</span>تركيز</a>
+    <a href="profile.html" data-nav><span class="nav-ico">👤</span>حسابي</a>
+  </nav>
+
+  <script src="../data.js"></script>
+  <script src="../js/store.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/curriculum.js"></script>
+  <script src="../js/progress.js"></script>
+  <script src="../js/app.js"></script>
+
+  <script>
+    (function () {
+      Auth.requireAuth();
+
+      const link = document.getElementById('tgLink');
+      const url = (Curriculum.getMeta().external || {}).telegram || '#';
+      link.href = url;
+      if (url === '#') {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          UI.toas('https://t.me/grade10jjo', 'warning');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
