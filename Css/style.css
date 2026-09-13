@@ -1,0 +1,735 @@
+/* ============================================================
+   صفحات داخلية — تنسيقات كاملة
+   يعتمد على متغيرات style.css
+   ============================================================ */
+
+/* ============================================================
+   1) Landing Page
+   ============================================================ */
+
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 40px 16px 60px;
+  text-align: center;
+}
+.hero h1 {
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+}
+.hero .subtitle {
+  font-size: 1.05rem;
+  color: var(--text-2);
+  max-width: 520px;
+  margin: 0 auto 30px;
+}
+.hero-actions {
+  display: flex; flex-direction: column; gap: 10px;
+  width: 100%; max-width: 320px;
+}
+.hero-actions .btn { width: 100%; }
+
+@media (min-width: 640px) {
+  .hero h1 { font-size: 2.8rem; }
+  .hero-actions {
+    flex-direction: row;
+    justify-content: center;
+    max-width: none;
+  }
+  .hero-actions .btn { width: auto; }
+}
+
+/* شبكة الميزات في الصفحة الرئيسية */
+.feature-grid {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+  display: grid; gap: 14px;
+}
+@media (min-width: 640px) {
+  .feature-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 900px) {
+  .feature-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.feature {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  transition: border-color .15s ease, transform .15s ease;
+}
+.feature:hover { border-color: var(--border-2); }
+.feature .ico {
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+.feature h3 { margin: 0 0 4px; font-size: 1rem; }
+.feature p  { margin: 0; font-size: .88rem; color: var(--text-2); }
+
+/* ============================================================
+   2) Auth (login.html)
+   ============================================================ */
+
+.auth-wrap {
+  min-height: 100vh;
+  display: grid; place-items: center;
+  padding: 30px 16px;
+}
+.auth-card {
+  width: 100%; max-width: 420px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-l);
+  padding: 26px;
+  box-shadow: var(--shadow);
+}
+.auth-tabs {
+  display: flex; gap: 6px;
+  margin-bottom: 20px;
+  background: var(--card-2);
+  padding: 5px;
+  border-radius: var(--radius-s);
+  border: 1px solid var(--border);
+}
+.auth-tabs button {
+  flex: 1;
+  padding: 9px;
+  background: transparent;
+  color: var(--text-2);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: .9rem;
+  transition: background .15s ease, color .15s ease;
+}
+.auth-tabs button.active {
+  background: var(--bg-2);
+  color: var(--text);
+}
+.auth-foot {
+  margin-top: 18px;
+  text-align: center;
+  font-size: .85rem;
+  color: var(--text-2);
+}
+
+/* ============================================================
+   3) Dashboard
+   ============================================================ */
+
+.hero-card { padding: 22px; }
+.hero-greet { font-size: 1.5rem; margin: 0 0 4px; }
+.hero-sub   { margin: 0; color: var(--text-2); }
+
+/* بطاقة إحصاء */
+.stat-card { padding: 18px; }
+.stat-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 6px;
+}
+.stat-label {
+  font-weight: 600;
+  color: var(--text-2);
+  font-size: .92rem;
+}
+
+/* Streak */
+.streak-big {
+  display: flex; align-items: baseline; gap: 8px;
+  margin-top: 6px;
+}
+.streak-big span {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+}
+.streak-big small {
+  color: var(--text-2);
+  font-size: .85rem;
+}
+
+/* البطاقات الصغيرة (مكتمل / منتصف / لم يبدأ) */
+.mini-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 4px;
+}
+.mini-num {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+.mini-lbl {
+  font-size: .8rem;
+  color: var(--text-2);
+}
+
+/* قائمة المواد المختصرة */
+.subject-list {
+  display: flex; flex-direction: column;
+  gap: 10px;
+}
+.subject-row {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  padding: 14px;
+}
+.subject-row strong { font-size: .95rem; color: var(--text); }
+
+/* الأهداف */
+.goals-list {
+  display: flex; flex-direction: column;
+  gap: 10px;
+}
+.goal-row { padding: 14px; }
+.goal-row.goal-done {
+  border-color: rgba(34,197,94,.4);
+  background: linear-gradient(180deg, rgba(34,197,94,.06), transparent);
+}
+
+/* النشاط الأخير */
+.activity-list {
+  display: flex; flex-direction: column;
+  gap: 8px;
+}
+.activity-row {
+  display: flex; align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+}
+.act-ico {
+  font-size: 1.2rem;
+  line-height: 1;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+/* الإنجازات */
+.ach-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+}
+.ach-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  padding: 12px;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 6px;
+  text-align: center;
+  transition: transform .15s ease, border-color .15s ease;
+}
+.ach-item.unlocked {
+  border-color: rgba(79,140,255,.4);
+  background: linear-gradient(180deg, var(--primary-t), transparent);
+}
+.ach-item.unlocked:hover { transform: translateY(-2px); }
+.ach-item.locked { opacity: .55; }
+.ach-ico { font-size: 1.6rem; line-height: 1; }
+.ach-title {
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ============================================================
+   4) Subjects Page
+   ============================================================ */
+
+.search-input {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  color: var(--text);
+  outline: none;
+  font-size: .95rem;
+  transition: border-color .15s ease;
+}
+.search-input:focus {
+  border-color: var(--primary);
+  background: var(--card);
+}
+
+.search-results {
+  margin-top: 10px;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  max-height: 340px;
+  overflow-y: auto;
+}
+.sr-item {
+  display: flex; align-items: center;
+  gap: 10px;
+  padding: 10px 8px;
+  border-radius: var(--radius-s);
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+  font-size: .92rem;
+  transition: background .15s ease;
+}
+.sr-item:hover { background: var(--card-2); }
+.sr-ico {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  width: 22px;
+  text-align: center;
+}
+.sr-item .tiny {
+  margin-inline-start: auto;
+  color: var(--text-3);
+}
+
+/* قائمة المواد التفصيلية */
+.subject-detail-list {
+  display: flex; flex-direction: column;
+  gap: 14px;
+}
+.subject-block {
+  padding: 0;
+  overflow: hidden;
+}
+.subject-head {
+  padding: 16px;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.subject-head:hover { background: var(--card-2); }
+.subject-block.open .subject-head {
+  border-bottom: 1px solid var(--border);
+}
+
+.units-list { padding: 10px 16px 16px; }
+
+.unit-block {
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--border);
+}
+.unit-block:last-child { border-bottom: none; }
+.unit-head strong {
+  font-size: .95rem;
+  color: var(--text);
+}
+
+/* قائمة الدروس المصغرة */
+.lessons-mini {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: flex; flex-direction: column;
+  gap: 6px;
+}
+.lesson-mini a {
+  display: flex; align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--card-2);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: .9rem;
+  text-decoration: none;
+  transition: background .15s ease, transform .1s ease;
+}
+.lesson-mini a:hover {
+  background: var(--primary-t);
+  color: var(--text);
+}
+.lesson-mini a:active { transform: scale(.99); }
+
+.lm-ico {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: .8rem;
+  font-weight: 700;
+  background: var(--card);
+  color: var(--text-2);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.lm-name { flex: 1; }
+
+.lesson-mini.done .lm-ico {
+  background: rgba(34,197,94,.15);
+  color: var(--success);
+  border-color: transparent;
+}
+.lesson-mini.inp .lm-ico {
+  background: rgba(245,158,11,.15);
+  color: var(--warning);
+  border-color: transparent;
+}
+.lesson-mini.done .lm-name {
+  color: var(--text-2);
+  text-decoration: line-through;
+}
+
+/* ============================================================
+   5) Lesson Page
+   ============================================================ */
+
+.breadcrumb {
+  display: flex; align-items: center;
+  gap: 6px;
+  font-size: .85rem;
+  color: var(--text-3);
+  flex-wrap: wrap;
+}
+.breadcrumb a { color: var(--text-2); }
+.breadcrumb a:hover { color: var(--primary); }
+
+.lesson-card { padding: 22px; }
+.lesson-title {
+  font-size: 1.5rem;
+  margin: 12px 0 0;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.lesson-actions {
+  display: flex; flex-direction: column;
+  gap: 10px;
+}
+@media (min-width: 640px) {
+  .lesson-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .lesson-actions .btn { flex: 1; min-width: 140px; }
+}
+
+.lesson-nav {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.lesson-nav .btn {
+  flex: 1;
+  min-width: 120px;
+}
+.lesson-nav .btn:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   6) Focus (Pomodoro) Page
+   ============================================================ */
+
+.pomo-card { padding: 22px; }
+
+.pomo-timer {
+  font-size: 3.4rem;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: 2px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  margin: 12px 0;
+  line-height: 1;
+}
+@media (min-width: 640px) {
+  .pomo-timer { font-size: 4.5rem; }
+}
+
+.pomo-presets {
+  justify-content: center;
+  gap: 8px;
+}
+.chip {
+  padding: 8px 14px;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-2);
+  font-size: .85rem;
+  font-weight: 600;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.chip:hover { background: var(--card); color: var(--text); }
+.chip.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+/* الاستراتيجيات (accordion) */
+.strat-list {
+  display: flex; flex-direction: column;
+  gap: 10px;
+}
+.strat-item {
+  padding: 0;
+  overflow: hidden;
+}
+.strat-item summary {
+  padding: 14px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: .95rem;
+  list-style: none;
+  display: flex; align-items: center;
+  gap: 10px;
+  transition: background .15s ease;
+}
+.strat-item summary::-webkit-details-marker { display: none; }
+.strat-item summary::after {
+  content: "▾";
+  margin-inline-start: auto;
+  color: var(--text-3);
+  transition: transform .2s ease;
+}
+.strat-item[open] summary::after { transform: rotate(180deg); }
+.strat-item summary:hover { background: var(--card-2); }
+.strat-item p {
+  margin: 0;
+  padding: 0 16px 16px;
+  color: var(--text-2);
+  font-size: .9rem;
+  line-height: 1.7;
+}
+.strat-ico {
+  font-size: 1.15rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   7) Tools Page
+   ============================================================ */
+
+.tool-hero {
+  padding: 22px;
+  background: linear-gradient(135deg, var(--primary-t), transparent);
+  border-color: var(--primary-t);
+}
+.tool-hero h2 { font-size: 1.3rem; }
+
+.tools-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) {
+  .tools-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 900px) {
+  .tools-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.tool-card {
+  display: flex; flex-direction: column;
+  gap: 6px;
+  padding: 18px;
+  color: inherit;
+  text-decoration: none;
+}
+.tool-card strong {
+  font-size: .98rem;
+  color: var(--text);
+}
+.tool-card .tool-ico {
+  font-size: 1.7rem;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.tips-list {
+  display: flex; flex-direction: column;
+  gap: 10px;
+}
+.tip-row {
+  display: flex; align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+}
+.tip-ico {
+  font-size: 1.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.tip-row strong {
+  display: block;
+  margin-bottom: 2px;
+  font-size: .95rem;
+}
+
+/* ============================================================
+   8) Community Page
+   ============================================================ */
+
+.community-hero {
+  padding: 32px 22px;
+  text-align: center;
+  background: linear-gradient(135deg, var(--primary-t), transparent);
+  border-color: var(--primary-t);
+}
+.community-hero .comm-ico {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 10px;
+  line-height: 1;
+}
+.community-hero h1 {
+  margin-bottom: 8px;
+  font-size: 1.5rem;
+}
+.community-hero .muted {
+  max-width: 520px;
+  margin: 0 auto 8px;
+}
+
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex; flex-direction: column;
+  gap: 8px;
+}
+.rules-list li {
+  padding: 10px 14px;
+  background: var(--card-2);
+  border-radius: var(--radius-s);
+  font-size: .9rem;
+  color: var(--text-2);
+  position: relative;
+  padding-inline-start: 34px;
+}
+.rules-list li::before {
+  content: "✓";
+  position: absolute;
+  inset-inline-start: 12px;
+  color: var(--success);
+  font-weight: 700;
+}
+
+/* ============================================================
+   9) Profile Page
+   ============================================================ */
+
+.profile-hero {
+  display: flex; align-items: center;
+  gap: 16px;
+  padding: 22px;
+}
+.avatar {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  display: grid; place-items: center;
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 900;
+  flex-shrink: 0;
+  box-shadow: 0 6px 18px var(--primary-t);
+}
+.profile-hero h1 {
+  margin: 0 0 4px;
+  font-size: 1.35rem;
+  word-break: break-word;
+}
+.profile-hero .muted {
+  margin: 0;
+  font-size: .88rem;
+  word-break: break-word;
+}
+
+.setting-row {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.setting-row:last-child { border-bottom: none; padding-bottom: 0; }
+.setting-row:first-child { padding-top: 0; }
+.setting-row strong {
+  display: block;
+  font-size: .95rem;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+/* ============================================================
+   10) Stats Page
+   ============================================================ */
+
+.stat-block {
+  padding: 18px;
+}
+.stat-block .stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+}
+.stat-block .stat-label {
+  font-size: .85rem;
+  color: var(--text-2);
+  margin-top: 6px;
+}
+
+.bars-list {
+  display: flex; flex-direction: column;
+  gap: 12px;
+}
+.bar-row {
+  display: flex; flex-direction: column;
+  gap: 6px;
+}
+.bar-row .bar-head {
+  display: flex; justify-content: space-between;
+  align-items: center;
+  font-size: .9rem;
+}
+.bar-row .bar-head strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* ============================================================
+   11) About Page
+   ============================================================ */
+
+.about-hero {
+  text-align: center;
+  padding: 30px 20px;
+}
+.about-hero h1 {
+  font-size: 1.8rem;
+  margin-bottom: 12px;
+}
+.about-hero .brand-logo {
+  width: 60px; height: 60px;
+  font-size: 1.8rem;
+  margin: 0 auto 14px;
+  border-radius: 16px;
+}
+
+/* ============================================================
+   12) Responsive tweaks
+   ============================================================ */
+
+@media (max-width: 480px) {
+  .hero-greet { font-size: 1.25rem; }
+  .lesson-title { font-size: 1.2rem; }
+  .pomo-timer { font-size: 3rem; }
+  .avatar { width: 54px; height: 54px; font-size: 1.35rem; }
+}
