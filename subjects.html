@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0e1116" />
+  <title>المنهج | منصة تقدّم</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f8cff'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='system-ui' font-weight='900' font-size='40' fill='white'%3E%D8%AA%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="header">
+    <div class="container header-inner">
+      <a href="dashboard.html" class="brand">
+        <span class="brand-logo">ت</span>
+        <span>المنهج<small>الفصل الأول</small></span>
+      </a>
+      <div class="row">
+        <button class="icon-btn" data-theme-toggle type="button" aria-label="تبديل الوضع">🌙</button>
+        <a href="profile.html" class="icon-btn" aria-label="حسابي">👤</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container section">
+
+    <section class="card mb-3">
+      <input type="search" id="searchInput" class="search-input"
+             placeholder="ابحث عن مادة، وحدة، أو درس…" autocomplete="off" />
+      <div id="searchResults" class="search-results hidden"></div>
+    </section>
+
+    <section class="row-between mb-3">
+      <h1>📚 كل المواد</h1>
+      <span class="badge info" id="curriculumMeta">—</span>
+    </section>
+
+    <div id="subjectsContainer" class="subject-detail-list"></div>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="dashboard.html"><span class="nav-ico">🏠</span>الرئيسية</a>
+    <a href="subjects.html"><span class="nav-ico">📚</span>المنهج</a>
+    <a href="profile.html"><span class="nav-ico">📊</span>إحصائياتي</a>
+    <a href="focus.html"><span class="nav-ico">🧠</span>تركيز</a>
+    <a href="profile.html"><span class="nav-ico">👤</span>حسابي</a>
+  </nav>
+
+  <footer class="footer">منصة تقدّم © <span id="year"></span></footer>
+
+  <script src="data.js"></script>
+  <script src="ui.js"></script>
+  <script src="auth.js"></script>
+  <script src="curriculum.js"></script>
+  <script src="progress.js"></script>
+  <script src="achievements.js"></script>
+  <script src="search.js"></script>
+  <script src="statistics.js"></script>
+  <script src="focus.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    (function () {
+      const user = Auth.requireAuth();
+      if (!user) return;
+
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      const stats = Curriculum.getStats();
+      document.getElementById('curriculumMeta').textContent =
+        `${stats.totalSubjects} مواد · ${stats.totalUnits} وحدة · ${stats.totalLessons} درسًا`;
+
+      /* ================= عرض المواد ================= */
+      const renderSubjects = () => {
+        const subjects = Curriculum.getSubjects();
+        const root = document.getElementById('subjectsContainer');
+
+        root.innerHTML = subjects.map(sub => {
+          const sc = Progress.subjectCounts(sub.id);
+          return `
+            <section class="subject-block card" id="s-${sub.id}">
+              <header class="subject-head" data-toggle-subject>
+                <div class="grow">
+                  <div class="row-between">
+                    <h2 class="mb-0">${UI.escape(sub.name)}</h2>
+                    <span class="badge ${sc.percent === 100 ? 'success' : sc.percent > 0 ? 'info' : ''}">${sc.percent}%</span>
+                  </div>
+                  <p class="tiny mt-1">
+                    ${sub.unitsCount} وحدات · ${sub.lessonsCount} درسًا · ✓ ${sc.done} · ◐ ${sc.inprogress} · ○ ${sc.notstarted}
+                  </p>
+                  <div class="progress mt-1"><span style="width:${sc.percent}%"></span></div>
+                </div>
+              </header>
+
+              <div class="units-list" hidden>
+                ${sub.units.map(u => {
+                  const uc = Progress.unitCounts(sub.id, u.unit_number);
+                  return `
+                    <div class="unit-block">
+                      <div class="unit-head">
+                        <div class="row-between">
+                          <strong>الوحدة ${u.unit_number}: ${UI.escape(u.name)}</strong>
+                          <span class="badge ${uc.percent === 100 ? 'success' : uc.percent > 0 ? 'info' : ''}">${uc.percent}%</span>
+                        </div>
+                        <div class="progress mt-1"><span style="width:${uc.percent}%"></span></div>
+                      </div>
+                      <ul class="lessons-mini">
+                        ${u.lessons.map(l => {
+                          const st = Progress.getStatus(l.lesson_id);
+                          const cls = st === 'done' ? 'done' : st === 'inprogress' ? 'inp' : '';
+                          const ico = st === 'done' ? '✓' : st === 'inprogress' ? '◐' : '○';
+                          return `
+                            <li class="lesson-mini ${cls}">
+                              <a href="lesson.html?id=${encodeURIComponent(l.lesson_id)}">
+                                <span class="lm-ico">${ico}</span>
+                                <span class="lm-name">${UI.escape(l.lesson_name)}</span>
+                              </a>
+                            </li>`;
+                        }).join('')}
+                      </ul>
+                    </div>`;
+                }).join('')}
+              </div>
+            </section>`;
+        }).join('');
+
+        /* فتح/إغلاق */
+        UI.els('[data-toggle-subject]').forEach(head => {
+          head.addEventListener('click', () => {
+            const block = head.closest('.subject-block');
+            const list = block.querySelector('.units-list');
+            list.hidden = !list.hidden;
+            block.classList.toggle('open', !list.hidden);
+          });
+        });
+
+        /* فتح المادة إذا في الهاش */
+        if (location.hash.startsWith('#s-')) {
+          const el = document.querySelector(location.hash);
+          if (el) {
+            const list = el.querySelector('.units-list');
+            if (list) list.hidden = false;
+            el.classList.add('open');
+            setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+          }
+        }
+      };
+
+      /* ================= البحث ================= */
+      const bindSearch = () => {
+        const input = document.getElementById('searchInput');
+        const box   = document.getElementById('searchResults');
+
+        input.addEventListener('input', () => {
+          const q = input.value.trim();
+          if (!q) { box.classList.add('hidden'); box.innerHTML = ''; return; }
+
+          box.innerHTML = Search.renderResults(q);
+          box.classList.remove('hidden');
+
+          UI.els('[data-subject]', box).forEach(el => {
+            el.addEventListener('click', () => {
+              const target = document.querySelector(`#s-${el.dataset.subject}`);
+              if (!target) return;
+              const list = target.querySelector('.units-list');
+              if (list) list.hidden = false;
+              target.classList.add('open');
+              box.classList.add('hidden');
+              input.value = '';
+              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+          });
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('#searchInput') && !e.target.closest('#searchResults')) {
+            box.classList.add('hidden');
+          }
+        });
+      };
+
+      renderSubjects();
+      bindSearch();
+    })();
+  </script>
+</body>
+</html>
