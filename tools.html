@@ -28,89 +28,55 @@
     <h1 class="mb-2">🛠️ أدوات الدراسة</h1>
     <p class="muted mb-3">أدوات مختصرة تساعدك على الدراسة بذكاء.</p>
 
-    <!-- ============================================================
-         NotebookLM — الأداة الأبرز
-         ============================================================ -->
-    <section class="tool-hero card mb-3">
+    <a href="https://notebooklm.google.com" target="_blank" rel="noopener"
+       class="card tool-hero mb-3" style="display:block; text-decoration:none; color:inherit;">
       <div class="row-between wrap" style="gap:10px">
         <div class="grow">
           <h2 class="mb-1">📓 NotebookLM</h2>
-          <p class="muted mb-0">
-            ارفع ملفاتك ومصادرك، ولخّص، وافهم بشكل أعمق بمساعدة Google NotebookLM.
-          </p>
+          <p class="muted mb-0">ارفع مصادرك، لخّص، وافهم بشكل أعمق بمساعدة Google NotebookLM.</p>
         </div>
-        <a id="notebookLink"
-           href="https://notebooklm.google.com"
-           target="_blank"
-           rel="noopener"
-           class="btn primary">
-          الانتقال إلى NotebookLM →
-        </a>
+        <span class="btn primary">الانتقال →</span>
       </div>
-    </section>
+    </a>
 
-    <!-- ============================================================
-         أدوات المنصة
-         ============================================================ -->
     <h2 class="mb-2">أدوات المنصة</h2>
     <div class="tools-grid mb-3">
-
       <a href="focus.html" class="tool-card card hover">
         <span class="tool-ico">🧠</span>
         <strong>استراتيجيات التركيز</strong>
-        <p class="tiny mb-0">Pomodoro + استراتيجيات عملية للتركيز العميق.</p>
+        <p class="tiny mb-0">Pomodoro + استراتيجيات عملية.</p>
       </a>
-
       <a href="statistics.html" class="tool-card card hover">
         <span class="tool-ico">📊</span>
         <strong>الإحصائيات</strong>
-        <p class="tiny mb-0">تحليل مستواك، نسب الإنجاز، وأيام نشاطك.</p>
+        <p class="tiny mb-0">تحليل مستواك ونسب الإنجاز.</p>
       </a>
-
       <a href="subjects.html" class="tool-card card hover">
         <span class="tool-ico">📚</span>
         <strong>المنهج</strong>
-        <p class="tiny mb-0">تابع دروسك، حدّث حالتها، واعرف أين أنت.</p>
+        <p class="tiny mb-0">تابع دروسك وحدّث حالتها.</p>
       </a>
-
       <a href="community.html" class="tool-card card hover">
         <span class="tool-ico">💬</span>
         <strong>المجتمع</strong>
-        <p class="tiny mb-0">قناة Telegram الرسمية لمجتمع جيل 2011.</p>
+        <p class="tiny mb-0">قناة Telegram الرسمية.</p>
       </a>
-
     </div>
 
-    <!-- ============================================================
-         نصائح سريعة
-         ============================================================ -->
     <h2 class="mb-2">💡 نصائح سريعة</h2>
     <div class="tips-list">
-
       <div class="tip-row card">
         <span class="tip-ico">📵</span>
-        <div>
-          <strong>قلّل المشتتات</strong>
-          <p class="tiny mb-0">ضع هاتفك بعيدًا لمدة الجلسة — 25 دقيقة فقط.</p>
-        </div>
+        <div><strong>قلّل المشتتات</strong><p class="tiny mb-0">ضع هاتفك بعيدًا 25 دقيقة.</p></div>
       </div>
-
       <div class="tip-row card">
         <span class="tip-ico">✍️</span>
-        <div>
-          <strong>اكتب ما فهمته</strong>
-          <p class="tiny mb-0">بعد كل درس، اكتب 3 أسطر بلغتك عن أهم ما تعلمته.</p>
-        </div>
+        <div><strong>اكتب ما فهمته</strong><p class="tiny mb-0">3 أسطر بعد كل درس.</p></div>
       </div>
-
       <div class="tip-row card">
         <span class="tip-ico">🔁</span>
-        <div>
-          <strong>راجع بعد 24 ساعة</strong>
-          <p class="tiny mb-0">المراجعة السريعة بعد يوم تثبّت المعلومة في الذاكرة.</p>
-        </div>
+        <div><strong>راجع بعد 24 ساعة</strong><p class="tiny mb-0">مراجعة قصيرة تثبّت المعلومة.</p></div>
       </div>
-
     </div>
 
   </main>
@@ -137,23 +103,8 @@
   <script src="app.js"></script>
 
   <script>
-    (function () {
-      Auth.requireAuth();
-      document.getElementById('year').textContent = new Date().getFullYear();
-
-      /* ===== رابط NotebookLM من data.js ===== */
-      const link = document.getElementById('notebookLink');
-      const url  = (Curriculum.getMeta().external || {}).notebooklm || 'https://notebooklm.google.com';
-
-      if (url) {
-        link.href = url;
-      } else {
-        link.addEventListener('click', function (e) {
-          e.preventDefault();
-          UI.toast('لم يتم ضبط رابط NotebookLM بعد.', 'warning');
-        });
-      }
-    })();
+    Auth.requireAuth();
+    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
