@@ -28,7 +28,6 @@
     <h1 class="mb-2">🧠 استراتيجيات التركيز</h1>
     <p class="muted mb-3">أدوات عملية لتقليل التشتت والدراسة بتركيز حقيقي.</p>
 
-    <!-- Pomodoro -->
     <section class="card pomo-card mb-3">
       <div class="row-between mb-2">
         <h2 class="mb-0">🍅 Pomodoro</h2>
@@ -57,7 +56,6 @@
       </p>
     </section>
 
-    <!-- استراتيجيات -->
     <h2 class="mb-2">📌 استراتيجيات عملية</h2>
 
     <div class="strat-list">
@@ -92,9 +90,9 @@
   <nav class="bottom-nav">
     <a href="dashboard.html"><span class="nav-ico">🏠</span>الرئيسية</a>
     <a href="subjects.html"><span class="nav-ico">📚</span>المنهج</a>
-    <a href="statistics.html"><span class="nav-ico">📊</span>الإحصائيات</a>
+    <a href="statistics.html"><span class="nav-ico">📊</span>إحصاءاتي</a>
     <a href="focus.html"><span class="nav-ico">🧠</span>تركيز</a>
-    <a href="profile.html"><span class="nav-ico">👤</span>حسابي</a>
+    <a href="community.html"><span class="nav-ico">💬</span>المجتمع</a>
   </nav>
 
   <footer class="footer">منصة تقدّم © <span id="year"></span></footer>
@@ -111,10 +109,8 @@
   <script src="app.js"></script>
 
   <script>
-    (function () {
-      Auth.requireAuth();
-      document.getElementById('year').textContent = new Date().getFullYear();
-    })();
+    Auth.requireAuth();
+    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
