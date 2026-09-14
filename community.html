@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0e1116" />
+  <title>المجتمع | منصة تقدّم</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f8cff'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='system-ui' font-weight='900' font-size='40' fill='white'%3E%D8%AA%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="header">
+    <div class="container header-inner">
+      <a href="dashboard.html" class="brand">
+        <span class="brand-logo">ت</span>
+        <span>مجتمع جيل 2011<small>Telegram</small></span>
+      </a>
+      <div class="row">
+        <button class="icon-btn" data-theme-toggle type="button" aria-label="تبديل الوضع">🌙</button>
+        <a href="profile.html" class="icon-btn" aria-label="حسابي">👤</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container section">
+
+    <section class="card community-hero mb-3">
+      <span class="comm-ico" aria-hidden="true">💬</span>
+      <h1>مجتمع جيل 2011</h1>
+      <p class="muted">قناة Telegram الرسمية للتواصل، الأسئلة، ومشاركة الملفات.</p>
+      <a id="tgLink" href="#" target="_blank" rel="noopener" class="btn primary mt-2">
+        انضم إلى القناة →
+      </a>
+    </section>
+
+    <h2 class="mb-2">📌 ماذا تجد في القناة؟</h2>
+
+    <div class="feature-grid" style="padding:0">
+      <div class="feature">
+        <div class="ico">📢</div>
+        <h3>إعلانات مهمة</h3>
+        <p>تنبيهات عن الاختبارات والمواعيد والمواد الجديدة.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">❓</div>
+        <h3>أسئلة وأجوبة</h3>
+        <p>اسأل عن أي درس وستجد من يساعدك.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">📎</div>
+        <h3>ملفات ومصادر</h3>
+        <p>ملخصات، أوراق عمل، وشروحات.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">🤝</div>
+        <h3>متابعة جماعية</h3>
+        <p>شجّع نفسك مع من يدرس نفس المنهج.</p>
+      </div>
+    </div>
+
+    <section class="card mt-3">
+      <h2 class="mb-2">📋 قواعد بسيطة</h2>
+      <ul class="rules-list">
+        <li>احترم الجميع — لا سخرية ولا تنمّر.</li>
+        <li>لا محتوى خارج الدراسة.</li>
+        <li>الأسئلة في الموضوع المخصص لها.</li>
+        <li>لا روابط مشبوهة أو إعلانات.</li>
+        <li>مشاركة المصادر مرحّب بها — بشرط أن تكون مفيدة.</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="dashboard.html"><span class="nav-ico">🏠</span>الرئيسية</a>
+    <a href="subjects.html"><span class="nav-ico">📚</span>المنهج</a>
+    <a href="statistics.html"><span class="nav-ico">📊</span>الإحصائيات</a>
+    <a href="focus.html"><span class="nav-ico">🧠</span>تركيز</a>
+    <a href="profile.html"><span class="nav-ico">👤</span>حسابي</a>
+  </nav>
+
+  <footer class="footer">منصة تقدّم © <span id="year"></span></footer>
+
+  <script src="data.js"></script>
+  <script src="ui.js"></script>
+  <script src="auth.js"></script>
+  <script src="curriculum.js"></script>
+  <script src="progress.js"></script>
+  <script src="achievements.js"></script>
+  <script src="search.js"></script>
+  <script src="statistics.js"></script>
+  <script src="focus.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    (function () {
+      Auth.requireAuth();
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      const link = document.getElementById('tgLink');
+      const url  = (Curriculum.getMeta().external || {}).telegram || '';
+      if (url) {
+        link.href = url;
+      } else {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          UI.toast('لم يتم ضبط رابط Telegram بعد.', 'warning');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
