@@ -26,8 +26,7 @@
   <main class="container section">
 
     <section class="card mb-3">
-      <input type="search" id="searchInput" class="search-input"
-             placeholder="ابحث عن مادة، وحدة، أو درس…" autocomplete="off" />
+      <input type="search" id="searchInput" class="search-input" placeholder="ابحث عن مادة، وحدة، أو درس…" autocomplete="off" />
       <div id="searchResults" class="search-results hidden"></div>
     </section>
 
@@ -43,9 +42,9 @@
   <nav class="bottom-nav">
     <a href="dashboard.html"><span class="nav-ico">🏠</span>الرئيسية</a>
     <a href="subjects.html"><span class="nav-ico">📚</span>المنهج</a>
-    <a href="profile.html"><span class="nav-ico">📊</span>إحصائياتي</a>
+    <a href="statistics.html"><span class="nav-ico">📊</span>إحصاءاتي</a>
     <a href="focus.html"><span class="nav-ico">🧠</span>تركيز</a>
-    <a href="profile.html"><span class="nav-ico">👤</span>حسابي</a>
+    <a href="community.html"><span class="nav-ico">💬</span>المجتمع</a>
   </nav>
 
   <footer class="footer">منصة تقدّم © <span id="year"></span></footer>
@@ -65,70 +64,61 @@
     (function () {
       const user = Auth.requireAuth();
       if (!user) return;
-
       document.getElementById('year').textContent = new Date().getFullYear();
 
       const stats = Curriculum.getStats();
       document.getElementById('curriculumMeta').textContent =
-        `${stats.totalSubjects} مواد · ${stats.totalUnits} وحدة · ${stats.totalLessons} درسًا`;
+        stats.totalSubjects + ' مواد · ' + stats.totalUnits + ' وحدة · ' + stats.totalLessons + ' درسًا';
 
-      /* ================= عرض المواد ================= */
-      const renderSubjects = () => {
+      function renderSubjects() {
         const subjects = Curriculum.getSubjects();
         const root = document.getElementById('subjectsContainer');
 
-        root.innerHTML = subjects.map(sub => {
+        root.innerHTML = subjects.map(function (sub) {
           const sc = Progress.subjectCounts(sub.id);
-          return `
-            <section class="subject-block card" id="s-${sub.id}">
-              <header class="subject-head" data-toggle-subject>
-                <div class="grow">
-                  <div class="row-between">
-                    <h2 class="mb-0">${UI.escape(sub.name)}</h2>
-                    <span class="badge ${sc.percent === 100 ? 'success' : sc.percent > 0 ? 'info' : ''}">${sc.percent}%</span>
-                  </div>
-                  <p class="tiny mt-1">
-                    ${sub.unitsCount} وحدات · ${sub.lessonsCount} درسًا · ✓ ${sc.done} · ◐ ${sc.inprogress} · ○ ${sc.notstarted}
-                  </p>
-                  <div class="progress mt-1"><span style="width:${sc.percent}%"></span></div>
-                </div>
-              </header>
-
-              <div class="units-list" hidden>
-                ${sub.units.map(u => {
-                  const uc = Progress.unitCounts(sub.id, u.unit_number);
-                  return `
-                    <div class="unit-block">
-                      <div class="unit-head">
-                        <div class="row-between">
-                          <strong>الوحدة ${u.unit_number}: ${UI.escape(u.name)}</strong>
-                          <span class="badge ${uc.percent === 100 ? 'success' : uc.percent > 0 ? 'info' : ''}">${uc.percent}%</span>
-                        </div>
-                        <div class="progress mt-1"><span style="width:${uc.percent}%"></span></div>
-                      </div>
-                      <ul class="lessons-mini">
-                        ${u.lessons.map(l => {
-                          const st = Progress.getStatus(l.lesson_id);
-                          const cls = st === 'done' ? 'done' : st === 'inprogress' ? 'inp' : '';
-                          const ico = st === 'done' ? '✓' : st === 'inprogress' ? '◐' : '○';
-                          return `
-                            <li class="lesson-mini ${cls}">
-                              <a href="lesson.html?id=${encodeURIComponent(l.lesson_id)}">
-                                <span class="lm-ico">${ico}</span>
-                                <span class="lm-name">${UI.escape(l.lesson_name)}</span>
-                              </a>
-                            </li>`;
-                        }).join('')}
-                      </ul>
-                    </div>`;
-                }).join('')}
-              </div>
-            </section>`;
+          return '<section class="subject-block card" id="s-' + sub.id + '">' +
+            '<header class="subject-head" data-toggle-subject>' +
+              '<div class="grow">' +
+                '<div class="row-between">' +
+                  '<h2 class="mb-0">' + UI.escape(sub.name) + '</h2>' +
+                  '<span class="badge ' + (sc.percent === 100 ? 'success' : sc.percent > 0 ? 'info' : '') + '">' + sc.percent + '%</span>' +
+                '</div>' +
+                '<p class="tiny mt-1">' + sub.unitsCount + ' وحدات · ' + sub.lessonsCount + ' درسًا · ✓ ' + sc.done + ' · ◐ ' + sc.inprogress + ' · ○ ' + sc.notstarted + '</p>' +
+                '<div class="progress mt-1"><span style="width:' + sc.percent + '%"></span></div>' +
+              '</div>' +
+            '</header>' +
+            '<div class="units-list" hidden>' +
+              sub.units.map(function (u) {
+                const uc = Progress.unitCounts(sub.id, u.unit_number);
+                return '<div class="unit-block">' +
+                  '<div class="unit-head">' +
+                    '<div class="row-between">' +
+                      '<strong>الوحدة ' + u.unit_number + ': ' + UI.escape(u.name) + '</strong>' +
+                      '<span class="badge ' + (uc.percent === 100 ? 'success' : uc.percent > 0 ? 'info' : '') + '">' + uc.percent + '%</span>' +
+                    '</div>' +
+                    '<div class="progress mt-1"><span style="width:' + uc.percent + '%"></span></div>' +
+                  '</div>' +
+                  '<ul class="lessons-mini">' +
+                    u.lessons.map(function (l) {
+                      const st = Progress.getStatus(l.lesson_id);
+                      const cls = st === 'done' ? 'done' : st === 'inprogress' ? 'inp' : '';
+                      const ico = st === 'done' ? '✓' : st === 'inprogress' ? '◐' : '○';
+                      return '<li class="lesson-mini ' + cls + '">' +
+                        '<a href="lesson.html?id=' + encodeURIComponent(l.lesson_id) + '">' +
+                          '<span class="lm-ico">' + ico + '</span>' +
+                          '<span class="lm-name">' + UI.escape(l.lesson_name) + '</span>' +
+                        '</a>' +
+                      '</li>';
+                    }).join('') +
+                  '</ul>' +
+                '</div>';
+              }).join('') +
+            '</div>' +
+          '</section>';
         }).join('');
 
-        /* فتح/إغلاق */
-        UI.els('[data-toggle-subject]').forEach(head => {
-          head.addEventListener('click', () => {
+        UI.els('[data-toggle-subject]').forEach(function (head) {
+          head.addEventListener('click', function () {
             const block = head.closest('.subject-block');
             const list = block.querySelector('.units-list');
             list.hidden = !list.hidden;
@@ -136,53 +126,19 @@
           });
         });
 
-        /* فتح المادة إذا في الهاش */
-        if (location.hash.startsWith('#s-')) {
+        if (location.hash.indexOf('#s-') === 0) {
           const el = document.querySelector(location.hash);
           if (el) {
             const list = el.querySelector('.units-list');
             if (list) list.hidden = false;
             el.classList.add('open');
-            setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+            setTimeout(function () { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
           }
         }
-      };
+      }
 
-      /* ================= البحث ================= */
-      const bindSearch = () => {
-        const input = document.getElementById('searchInput');
-        const box   = document.getElementById('searchResults');
-
-        input.addEventListener('input', () => {
-          const q = input.value.trim();
-          if (!q) { box.classList.add('hidden'); box.innerHTML = ''; return; }
-
-          box.innerHTML = Search.renderResults(q);
-          box.classList.remove('hidden');
-
-          UI.els('[data-subject]', box).forEach(el => {
-            el.addEventListener('click', () => {
-              const target = document.querySelector(`#s-${el.dataset.subject}`);
-              if (!target) return;
-              const list = target.querySelector('.units-list');
-              if (list) list.hidden = false;
-              target.classList.add('open');
-              box.classList.add('hidden');
-              input.value = '';
-              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            });
-          });
-        });
-
-        document.addEventListener('click', (e) => {
-          if (!e.target.closest('#searchInput') && !e.target.closest('#searchResults')) {
-            box.classList.add('hidden');
-          }
-        });
-      };
-
+      Search.bind('#searchInput', '#searchResults');
       renderSubjects();
-      bindSearch();
     })();
   </script>
 </body>
