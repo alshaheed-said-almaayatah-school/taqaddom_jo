@@ -22,13 +22,11 @@
 
   <main class="auth-wrap">
     <div class="auth-card">
-
       <div class="auth-tabs" role="tablist">
         <button id="tabLogin" type="button" class="active" role="tab">تسجيل الدخول</button>
         <button id="tabRegister" type="button" role="tab">إنشاء حساب</button>
       </div>
 
-      <!-- تسجيل الدخول -->
       <form id="formLogin" autocomplete="on" novalidate>
         <div class="field">
           <label for="loginEmail">البريد الإلكتروني</label>
@@ -42,7 +40,6 @@
         <button type="submit" class="btn primary block mt-2">دخول</button>
       </form>
 
-      <!-- إنشاء حساب -->
       <form id="formRegister" autocomplete="on" novalidate class="hidden">
         <div class="field">
           <label for="regName">الاسم</label>
@@ -60,9 +57,7 @@
         <button type="submit" class="btn primary block mt-2">إنشاء الحساب</button>
       </form>
 
-      <p class="auth-foot">
-        بياناتك تُحفظ محليًا على جهازك فقط.
-      </p>
+      <p class="auth-foot">بياناتك تُحفظ محليًا على جهازك فقط.</p>
     </div>
   </main>
 
@@ -79,14 +74,14 @@
 
   <script>
     (function () {
-      const tabLogin     = document.getElementById('tabLogin');
-      const tabRegister  = document.getElementById('tabRegister');
-      const formLogin    = document.getElementById('formLogin');
-      const formRegister = document.getElementById('formRegister');
-      const errLogin     = document.getElementById('loginError');
-      const errRegister  = document.getElementById('regError');
+      const tabLogin    = document.getElementById('tabLogin');
+      const tabRegister = document.getElementById('tabRegister');
+      const formLogin   = document.getElementById('formLogin');
+      const formRegister= document.getElementById('formRegister');
+      const errLogin    = document.getElementById('loginError');
+      const errRegister = document.getElementById('regError');
 
-      const switchTo = (mode) => {
+      function switchTo(mode) {
         const isLogin = mode === 'login';
         tabLogin.classList.toggle('active', isLogin);
         tabRegister.classList.toggle('active', !isLogin);
@@ -94,40 +89,38 @@
         formRegister.classList.toggle('hidden', isLogin);
         errLogin.textContent = '';
         errRegister.textContent = '';
-      };
+      }
 
-      tabLogin.addEventListener('click', () => switchTo('login'));
-      tabRegister.addEventListener('click', () => switchTo('register'));
+      tabLogin.addEventListener('click', function () { switchTo('login'); });
+      tabRegister.addEventListener('click', function () { switchTo('register'); });
 
       const params = new URLSearchParams(location.search);
       if (params.get('mode') === 'register') switchTo('register');
-
-      // إذا مسجّل دخول بالفعل → dashboard
       if (Auth.currentUser()) location.replace('dashboard.html');
 
-      formLogin.addEventListener('submit', (e) => {
+      formLogin.addEventListener('submit', function (e) {
         e.preventDefault();
         errLogin.textContent = '';
         const res = Auth.login({
-          email:    document.getElementById('loginEmail').value,
+          email: document.getElementById('loginEmail').value,
           password: document.getElementById('loginPass').value
         });
         if (!res.ok) { errLogin.textContent = res.error; return; }
         UI.toast('أهلاً بعودتك، ' + res.user.name + ' 👋', 'success');
-        setTimeout(() => location.href = 'dashboard.html', 350);
+        setTimeout(function () { location.href = 'dashboard.html'; }, 350);
       });
 
-      formRegister.addEventListener('submit', (e) => {
+      formRegister.addEventListener('submit', function (e) {
         e.preventDefault();
         errRegister.textContent = '';
         const res = Auth.register({
-          name:     document.getElementById('regName').value,
-          email:    document.getElementById('regEmail').value,
+          name: document.getElementById('regName').value,
+          email: document.getElementById('regEmail').value,
           password: document.getElementById('regPass').value
         });
         if (!res.ok) { errRegister.textContent = res.error; return; }
         UI.toast('تم إنشاء حسابك بنجاح 🎉', 'success');
-        setTimeout(() => location.href = 'dashboard.html', 450);
+        setTimeout(function () { location.href = 'dashboard.html'; }, 450);
       });
     })();
   </script>
