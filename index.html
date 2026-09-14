@@ -4,157 +4,69 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0e1116" />
-  <meta name="description" content="منصة تقدّم — مجتمع جيل 2011. منصة لطلاب الصف العاشر في الأردن: تنظّم الدراسة، تتابع إنجاز المنهج، وتحسّن تجربة التركيز." />
   <title>منصة تقدّم | مجتمع جيل 2011</title>
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="style.css" />
-
-  <!-- Favicon (SVG data URI — يعمل بدون ملف خارجي) -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f8cff'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='system-ui' font-weight='900' font-size='40' fill='white'%3E%D8%AA%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- ============================================================
-       Header
-       ============================================================ -->
   <header class="header">
     <div class="container header-inner">
-      <a href="index.html" class="brand" aria-label="منصة تقدّم — الصفحة الرئيسية">
-        <span class="brand-logo" aria-hidden="true">ت</span>
-        <span>
-          منصة تقدّم
-          <small>مجتمع جيل 2011</small>
-        </span>
+      <a href="index.html" class="brand">
+        <span class="brand-logo">ت</span>
+        <span>منصة تقدّم<small>مجتمع جيل 2011</small></span>
       </a>
-
       <div class="row">
-        <button class="icon-btn" data-theme-toggle type="button"
-                title="تبديل الوضع" aria-label="تبديل الوضع الليلي/النهاري">🌙</button>
-
-        <a href="profile.html" class="icon-btn" data-require-auth
-           title="حسابي" aria-label="حسابي" style="display:none">👤</a>
-
-        <a href="login.html" class="icon-btn" data-require-guest
-           title="تسجيل الدخول" aria-label="تسجيل الدخول">↪</a>
+        <button class="icon-btn" data-theme-toggle type="button" aria-label="تبديل الوضع">🌙</button>
+        <a href="profile.html" class="icon-btn" data-require-auth style="display:none" aria-label="حسابي">👤</a>
+        <a href="login.html" class="icon-btn" data-require-guest aria-label="تسجيل الدخول">↪</a>
       </div>
     </div>
   </header>
 
-  <!-- ============================================================
-       Main — Hero + Features
-       ============================================================ -->
   <main>
-
-    <!-- ---------- Hero ---------- -->
     <section class="hero">
-
-      <span class="hero-badge" data-require-guest>
-        📚 للصف العاشر — الفصل الأول
-      </span>
-
+      <span class="hero-badge" data-require-guest>📚 للصف العاشر — الفصل الأول</span>
       <h1>تقدّم بخطوة كل يوم</h1>
+      <p class="subtitle">منصّتك لتنظيم الدراسة، متابعة إنجاز المنهج، والتركيز على ما يهمّ فعلاً. مصمّمة لطلاب الصف العاشر — جيل 2011.</p>
 
-      <p class="subtitle">
-        منصّتك لتنظيم الدراسة، متابعة إنجاز المنهج، والتركيز على ما يهمّ فعلاً.
-        مصمّمة لطلاب الصف العاشر — جيل 2011.
-      </p>
-
-      <!-- أزرار الزوار -->
       <div class="hero-actions" data-require-guest>
-        <a href="login.html?mode=register" class="btn primary">
-          ابدأ الآن
-        </a>
-        <a href="login.html" class="btn ghost">
-          تسجيل الدخول
-        </a>
-        <a href="#features" class="btn ghost">
-          استكشف المنصة
-        </a>
+        <a href="login.html?mode=register" class="btn primary">ابدأ الآن</a>
+        <a href="login.html" class="btn ghost">تسجيل الدخول</a>
+        <a href="#features" class="btn ghost">استكشف المنصة</a>
       </div>
 
-      <!-- أزرار المسجّلين -->
       <div class="hero-actions" data-require-auth style="display:none">
-        <a href="dashboard.html" class="btn primary">
-          اذهب إلى الرئيسية →
-        </a>
-        <a href="#features" class="btn ghost">
-          استكشف المنصة
-        </a>
+        <a href="dashboard.html" class="btn primary">اذهب إلى الرئيسية →</a>
+        <a href="#features" class="btn ghost">استكشف المنصة</a>
       </div>
-
     </section>
 
-    <!-- ---------- Features ---------- -->
     <section id="features" class="feature-grid">
-
-      <article class="feature">
-        <div class="ico" aria-hidden="true">📚</div>
-        <h3>متابعة المنهج</h3>
-        <p>اعرف بالضبط أين وصلت في كل مادة، وما الذي لم تبدأه بعد.</p>
-      </article>
-
-      <article class="feature">
-        <div class="ico" aria-hidden="true">📊</div>
-        <h3>تقدّم واضح</h3>
-        <p>نسب إنجاز دقيقة محسوبة من حالات دروسك — لا أرقام وهمية.</p>
-      </article>
-
-      <article class="feature">
-        <div class="ico" aria-hidden="true">🧠</div>
-        <h3>تركيز فعلي</h3>
-        <p>Pomodoro واستراتيجيات عملية تساعدك على الدراسة بدون تشتت.</p>
-      </article>
-
-      <article class="feature">
-        <div class="ico" aria-hidden="true">🏆</div>
-        <h3>إنجازات وأهداف</h3>
-        <p>أهداف يومية بسيطة، وسجل نشاط يذكّرك بما أنجزته.</p>
-      </article>
-
-      <article class="feature">
-        <div class="ico" aria-hidden="true">🛠️</div>
-        <h3>أدوات مساعدة</h3>
-        <p>روابط سريعة إلى NotebookLM وأدوات دراسية مفيدة.</p>
-      </article>
-
-      <article class="feature">
-        <div class="ico" aria-hidden="true">💬</div>
-        <h3>مجتمع جيل 2011</h3>
-        <p>قناة Telegram للتواصل، الأسئلة، والمتابعة الجماعية.</p>
-      </article>
-
+      <article class="feature"><div class="ico">📚</div><h3>متابعة المنهج</h3><p>اعرف بالضبط أين وصلت في كل مادة.</p></article>
+      <article class="feature"><div class="ico">📊</div><h3>تقدّم واضح</h3><p>نسب إنجاز دقيقة محسوبة من حالات دروسك.</p></article>
+      <article class="feature"><div class="ico">🧠</div><h3>تركيز فعلي</h3><p>Pomodoro واستراتيجيات عملية للتركيز.</p></article>
+      <article class="feature"><div class="ico">🏆</div><h3>إنجازات وأهداف</h3><p>أهداف يومية وسجل نشاط حقيقي.</p></article>
+      <article class="feature"><div class="ico">🛠️</div><h3>أدوات مساعدة</h3><p>روابط سريعة إلى NotebookLM وأدوات دراسية.</p></article>
+      <article class="feature"><div class="ico">💬</div><h3>مجتمع جيل 2011</h3><p>قناة Telegram للتواصل والمتابعة الجماعية.</p></article>
     </section>
 
-    <!-- ---------- CTA النهائي ---------- -->
     <section class="container section" data-require-guest>
       <div class="card cta-card">
         <h2 class="mb-1">جاهز تبدأ؟</h2>
-        <p class="muted mb-2">
-          أنشئ حسابك في ثوانٍ، وابدأ بتتبّع تقدمك في المنهج اليوم.
-        </p>
+        <p class="muted mb-2">أنشئ حسابك في ثوانٍ، وابدأ بتتبّع تقدمك في المنهج اليوم.</p>
         <div class="row wrap" style="gap:10px">
           <a href="login.html?mode=register" class="btn primary">إنشاء حساب</a>
           <a href="login.html" class="btn ghost">لديّ حساب بالفعل</a>
         </div>
       </div>
     </section>
-
   </main>
 
-  <!-- ============================================================
-       Footer
-       ============================================================ -->
   <footer class="footer">
-    <p>منصة تقدّم © <span id="year">2026</span> — مجتمع جيل 2011</p>
-    <p class="tiny">
-      المنهج: <span id="curriculumMeta">—</span>
-    </p>
+    <p>منصة تقدّم © <span id="year"></span> — مجتمع جيل 2011</p>
   </footer>
 
-  <!-- ============================================================
-       Scripts — ترتيب إلزامي
-       ============================================================ -->
   <script src="data.js"></script>
   <script src="ui.js"></script>
   <script src="auth.js"></script>
@@ -166,24 +78,8 @@
   <script src="focus.js"></script>
   <script src="app.js"></script>
 
-  <!-- ============================================================
-       سكربت الصفحة — بسيط، لا يحتوي أي منطق أساسي
-       ============================================================ -->
   <script>
-    (function () {
-      /* السنة الحالية */
-      document.getElementById('year').textContent = new Date().getFullYear();
-
-      /* إحصاءات المنهج (تُحسب من data.js عبر curriculum.js) */
-      const meta = document.getElementById('curriculumMeta');
-      if (window.Curriculum && typeof Curriculum.getStats === 'function') {
-        const s = Curriculum.getStats();
-        meta.textContent = `${s.totalSubjects} مواد · ${s.totalUnits} وحدة · ${s.totalLessons} درسًا`;
-      } else {
-        meta.textContent = '';
-      }
-    })();
+    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
-
 </body>
 </html>
