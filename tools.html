@@ -28,54 +28,89 @@
     <h1 class="mb-2">🛠️ أدوات الدراسة</h1>
     <p class="muted mb-3">أدوات مختصرة تساعدك على الدراسة بذكاء.</p>
 
+    <!-- ============================================================
+         NotebookLM — الأداة الأبرز
+         ============================================================ -->
     <section class="tool-hero card mb-3">
       <div class="row-between wrap" style="gap:10px">
-        <div>
+        <div class="grow">
           <h2 class="mb-1">📓 NotebookLM</h2>
-          <p class="muted mb-0">ارفع مصادرك، ولخّص، وافهم بشكل أعمق.</p>
+          <p class="muted mb-0">
+            ارفع ملفاتك ومصادرك، ولخّص، وافهم بشكل أعمق بمساعدة Google NotebookLM.
+          </p>
         </div>
-        <a id="notebookLink" href="#" target="_blank" rel="noopener" class="btn primary">الانتقال →</a>
+        <a id="notebookLink"
+           href="https://notebooklm.google.com"
+           target="_blank"
+           rel="noopener"
+           class="btn primary">
+          الانتقال إلى NotebookLM →
+        </a>
       </div>
     </section>
 
+    <!-- ============================================================
+         أدوات المنصة
+         ============================================================ -->
     <h2 class="mb-2">أدوات المنصة</h2>
     <div class="tools-grid mb-3">
+
       <a href="focus.html" class="tool-card card hover">
         <span class="tool-ico">🧠</span>
         <strong>استراتيجيات التركيز</strong>
-        <p class="tiny mb-0">Pomodoro + استراتيجيات عملية.</p>
+        <p class="tiny mb-0">Pomodoro + استراتيجيات عملية للتركيز العميق.</p>
       </a>
+
       <a href="statistics.html" class="tool-card card hover">
         <span class="tool-ico">📊</span>
         <strong>الإحصائيات</strong>
-        <p class="tiny mb-0">نسب الإنجاز وأيام نشاطك.</p>
+        <p class="tiny mb-0">تحليل مستواك، نسب الإنجاز، وأيام نشاطك.</p>
       </a>
+
       <a href="subjects.html" class="tool-card card hover">
         <span class="tool-ico">📚</span>
         <strong>المنهج</strong>
-        <p class="tiny mb-0">تابع دروسك وحدّث حالتها.</p>
+        <p class="tiny mb-0">تابع دروسك، حدّث حالتها، واعرف أين أنت.</p>
       </a>
+
       <a href="community.html" class="tool-card card hover">
         <span class="tool-ico">💬</span>
         <strong>المجتمع</strong>
-        <p class="tiny mb-0">قناة Telegram الرسمية.</p>
+        <p class="tiny mb-0">قناة Telegram الرسمية لمجتمع جيل 2011.</p>
       </a>
+
     </div>
 
+    <!-- ============================================================
+         نصائح سريعة
+         ============================================================ -->
     <h2 class="mb-2">💡 نصائح سريعة</h2>
     <div class="tips-list">
+
       <div class="tip-row card">
         <span class="tip-ico">📵</span>
-        <div><strong>قلّل المشتتات</strong><p class="tiny mb-0">ضع هاتفك بعيدًا 25 دقيقة.</p></div>
+        <div>
+          <strong>قلّل المشتتات</strong>
+          <p class="tiny mb-0">ضع هاتفك بعيدًا لمدة الجلسة — 25 دقيقة فقط.</p>
+        </div>
       </div>
+
       <div class="tip-row card">
         <span class="tip-ico">✍️</span>
-        <div><strong>اكتب ما فهمته</strong><p class="tiny mb-0">3 أسطر بعد كل درس.</p></div>
+        <div>
+          <strong>اكتب ما فهمته</strong>
+          <p class="tiny mb-0">بعد كل درس، اكتب 3 أسطر بلغتك عن أهم ما تعلمته.</p>
+        </div>
       </div>
+
       <div class="tip-row card">
         <span class="tip-ico">🔁</span>
-        <div><strong>راجع بعد 24 ساعة</strong><p class="tiny mb-0">مراجعة قصيرة تثبّت المعلومة.</p></div>
+        <div>
+          <strong>راجع بعد 24 ساعة</strong>
+          <p class="tiny mb-0">المراجعة السريعة بعد يوم تثبّت المعلومة في الذاكرة.</p>
+        </div>
       </div>
+
     </div>
 
   </main>
@@ -83,9 +118,9 @@
   <nav class="bottom-nav">
     <a href="dashboard.html"><span class="nav-ico">🏠</span>الرئيسية</a>
     <a href="subjects.html"><span class="nav-ico">📚</span>المنهج</a>
-    <a href="statistics.html"><span class="nav-ico">📊</span>الإحصائيات</a>
+    <a href="statistics.html"><span class="nav-ico">📊</span>إحصاءاتي</a>
     <a href="focus.html"><span class="nav-ico">🧠</span>تركيز</a>
-    <a href="profile.html"><span class="nav-ico">👤</span>حسابي</a>
+    <a href="community.html"><span class="nav-ico">💬</span>المجتمع</a>
   </nav>
 
   <footer class="footer">منصة تقدّم © <span id="year"></span></footer>
@@ -106,8 +141,18 @@
       Auth.requireAuth();
       document.getElementById('year').textContent = new Date().getFullYear();
 
-      const url = (Curriculum.getMeta().external || {}).notebooklm || '#';
-      document.getElementById('notebookLink').href = url;
+      /* ===== رابط NotebookLM من data.js ===== */
+      const link = document.getElementById('notebookLink');
+      const url  = (Curriculum.getMeta().external || {}).notebooklm || 'https://notebooklm.google.com';
+
+      if (url) {
+        link.href = url;
+      } else {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          UI.toast('لم يتم ضبط رابط NotebookLM بعد.', 'warning');
+        });
+      }
     })();
   </script>
 </body>
