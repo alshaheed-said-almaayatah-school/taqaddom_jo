@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0e1116" />
+  <title>عن المنصة | منصة تقدّم</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f8cff'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='system-ui' font-weight='900' font-size='40' fill='white'%3E%D8%AA%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand">
+        <span class="brand-logo">ت</span>
+        <span>عن المنصة<small>من نحن</small></span>
+      </a>
+      <div class="row">
+        <button class="icon-btn" data-theme-toggle type="button" aria-label="تبديل الوضع">🌙</button>
+        <a href="profile.html" class="icon-btn" data-require-auth aria-label="حسابي" style="display:none">👤</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container section">
+
+    <section class="card about-hero mb-3">
+      <span class="brand-logo" aria-hidden="true">ت</span>
+      <h1>منصة تقدّم</h1>
+      <p class="muted">مجتمع جيل 2011 — الصف العاشر، الأردن</p>
+    </section>
+
+    <section class="card mb-3">
+      <h2 class="mb-2">🎯 هدف المنصة</h2>
+      <p class="muted">
+        مساعدة طالب الصف العاشر على تنظيم دراسته، معرفة أين وصل في المنهج،
+        تقليل التشتت، ومتابعة تقدمه حتى إكمال المنهج بالكامل.
+      </p>
+      <p class="muted mb-0">
+        ليست منصة محتوى — لا نكتب دروسًا ولا نلخّص مناهج. نقدّم إطارًا
+        منظّمًا يساعدك على معرفة أين أنت، وما الذي يجب أن تنجزه تاليًا.
+      </p>
+    </section>
+
+    <h2 class="mb-2">✨ ما الذي يجعلها مفيدة؟</h2>
+    <div class="feature-grid mb-3" style="padding:0">
+      <div class="feature">
+        <div class="ico">🧭</div>
+        <h3>وضوح المسار</h3>
+        <p>تعرف بالضبط أين أنت في كل مادة، وما تبقّى أمامك.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">📊</div>
+        <h3>حسابات دقيقة</h3>
+        <p>نسب الإنجاز محسوبة من حالات دروسك الفعلية — لا أرقام وهمية.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">🎯</div>
+        <h3>أهداف وأيام نشاط</h3>
+        <p>سلسلة أيام متتالية، أهداف يومية، وسجل نشاط حقيقي.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">🧠</div>
+        <h3>تركيز فعلي</h3>
+        <p>Pomodoro واستراتيجيات عملية للدراسة العميقة.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">📱</div>
+        <h3>مصمّمة للهاتف</h3>
+        <p>تجربة سريعة ومريحة على الجوال قبل أي شيء آخر.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">🔒</div>
+        <h3>بياناتك عندك</h3>
+        <p>كل شيء محفوظ على جهازك — بدون حساب سحابي.</p>
+      </div>
+    </div>
+
+    <section class="card mb-3">
+      <h2 class="mb-2">📚 المنهج</h2>
+      <p class="tiny muted mb-2">
+        البيانات مأخوذة من المنهاج الأردني الرسمي — المركز الوطني لتطوير المناهج.
+      </p>
+      <div class="row wrap" style="gap:8px">
+        <span class="badge info" id="metaSubjects">—</span>
+        <span class="badge info" id="metaUnits">—</span>
+        <span class="badge info" id="metaLessons">—</span>
+      </div>
+    </section>
+
+    <section class="card mb-3">
+      <h2 class="mb-2">💬 تواصل معنا</h2>
+      <p class="muted mb-2">قناة Telegram الرسمية لمجتمع جيل 2011.</p>
+      <a id="tgLink" href="#" target="_blank" rel="noopener" class="btn primary">
+        انضم إلى القناة →
+      </a>
+    </section>
+
+    <p class="tiny center mt-3">
+      منصة تقدّم — إصدار 1.0
+    </p>
+
+  </main>
+
+  <footer class="footer">منصة تقدّم © <span id="year"></span></footer>
+
+  <script src="data.js"></script>
+  <script src="ui.js"></script>
+  <script src="auth.js"></script>
+  <script src="curriculum.js"></script>
+  <script src="progress.js"></script>
+  <script src="achievements.js"></script>
+  <script src="search.js"></script>
+  <script src="statistics.js"></script>
+  <script src="focus.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    (function () {
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      /* ===== الإحصاءات ===== */
+      const s = Curriculum.getStats();
+      document.getElementById('metaSubjects').textContent = `${s.totalSubjects} مادة`;
+      document.getElementById('metaUnits').textContent    = `${s.totalUnits} وحدة`;
+      document.getElementById('metaLessons').textContent  = `${s.totalLessons} درسًا`;
+
+      /* ===== Telegram ===== */
+      const link = document.getElementById('tgLink');
+      const url  = (Curriculum.getMeta().external || {}).telegram || '';
+      if (url) {
+        link.href = url;
+      } else {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          UI.toast('لم يتم ضبط رابط Telegram بعد.', 'warning');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
