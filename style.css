@@ -144,9 +144,9 @@ p  { margin: 0 0 1em; color: var(--text-2); }
    ============================================================ */
 
 .brand-logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
   overflow: hidden;
   background: #0a1428;
   flex-shrink: 0;
@@ -155,13 +155,34 @@ p  { margin: 0 0 1em; color: var(--text-2); }
   box-shadow: 0 4px 12px var(--primary-t);
 }
 
+/* اقتصاص الجزء العلوي (السهم) */
 .brand-logo img {
   width: 100%;
-  height: 250%;
+  height: 100%;
   object-fit: cover;
-  object-position: top center;
+  object-position: center 15%;
   display: block;
-  transform: translateY(-8%);
+  transform: scale(2.4);
+  transform-origin: center 18%;
+}
+
+/* لوجو صفحة "عن المنصة" — كامل */
+.about-hero .brand-logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 22px;
+  padding: 8px;
+  margin: 0 auto 16px;
+  background: #0a1428;
+}
+
+.about-hero .brand-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  transform: none;
+  transform-origin: center;
 }
 
 /* ============================================================
@@ -581,18 +602,18 @@ p  { margin: 0 0 1em; color: var(--text-2); }
 }
 
 .streak-big {
-  display: flex; align-items: baseline; gap: );
-8px;
-  margin-top: 6 px;
+  display: flex; align-items: baseline; gap: 8px;
+  margin-top: 6px;
 }
-.stre fontak-big span {
--size  font-size: 2.4rem;
+.streak-big span {
+  font-size: 2.4rem;
   font-weight: 800;
   color: var(--primary);
   line-height: 1;
 }
-:.streak-big small {
-  color: . var(--text-285rem;
+.streak-big small {
+  color: var(--text-2);
+  font-size: .85rem;
 }
 
 .mini-card {
@@ -1053,4 +1074,7 @@ p  { margin: 0 0 1em; color: var(--text-2); }
   padding: 22px;
 }
 .avatar {
-  width: 64px; height: 64
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  display: grid;
