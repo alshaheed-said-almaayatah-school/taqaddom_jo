@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0e1116" />
+  <title>الامتحانات | منصة تقدّم</title>
+  <link rel="icon" href="logo.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="exams">
+
+  <div id="loading" class="loading-screen">
+    <div class="loading-logo"><img src="logo.png" alt="تقدّم" /></div>
+    <div class="loading-spinner"></div>
+    <p class="loading-text">جاري التحميل…</p>
+  </div>
+
+  <div id="offline" class="offline-screen hidden">
+    <div class="offline-card">
+      <span class="offline-ico">📡</span>
+      <h2>لا يوجد اتصال بالإنترنت</h2>
+      <p>هذه المنصة تحتاج اتصالًا دائمًا.</p>
+      <button class="btn primary" onclick="location.reload()">إعادة المحاولة</button>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="container header-inner">
+      <a href="dashboard.html" class="brand">
+        <span class="brand-logo"><img src="logo.png" alt="تقدّم" /></span>
+        <span>الامتحانات<small>عدّاد تنازلي</small></span>
+      </a>
+      <div class="row">
+        <button class="icon-btn" data-theme-toggle type="button" aria-label="تبديل الوضع">🌙</button>
+        <a href="profile.html" class="icon-btn" aria-label="حسابي">👤</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container section">
+
+    <h1 class="mb-2">📅 الامتحانات</h1>
+    <p class="muted mb-3">أضف مواعيد امتحاناتك، وتابع العدّاد التنازلي.</p>
+
+    <!-- نموذج الإضافة -->
+    <section class="card exam-add-card mb-3">
+      <h2 class="mb-2">➕ إضافة امتحان</h2>
+      <form id="examForm" autocomplete="off">
+        <div class="field">
+          <label for="examTitle">اسم الامتحان</label>
+          <input type="text" id="examTitle" name="examTitle" placeholder="مثلاً: امتحان الرياضيات - الوحدة 1" required />
+        </div>
+        <div class="field">
+          <label for="examSubject">المادة (اختياري)</label>
+          <input type="text" id="examSubject" name="examSubject" placeholder="مثلاً: الرياضيات" />
+        </div>
+        <div class="field">
+          <label for="examDate">التاريخ والساعة</label>
+          <input type="datetime-local" id="examDate" name="examDate" required />
+        </div>
+        <div class="field">
+          <label for="examNotes">ملاحظات (اختياري)</label>
+          <input type="text" id="examNotes" name="examNotes" placeholder="مثلاً: الوحدات 1-2" />
+        </div>
+        <button type="submit" class="btn primary block">إضافة الامتحان</button>
+      </form>
+    </section>
+
+    <!-- قائمة الامتحانات -->
+    <h2 class="mb-2">📋 امتحاناتك القادمة</h2>
+    <div id="examsList" class="exams-list"></div>
+
+  </main>
+
+  <!-- FAB -->
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <div class="floating-menu" id="floatingMenu">
+    <a href="dashboard.html"><span class="nav-ico">🏠</span>الرئيسية</a>
+    <a href="subjects.html"><span class="nav-ico">📚</span>المنهج</a>
+    <a href="exams.html"><span class="nav-ico">📅</span>الامتحانات</a>
+    <a href="tasks.html"><span class="nav-ico">✅</span>المهام</a>
+    <a href="grades.html"><span class="nav-ico">📈</span>المعدل</a>
+    <a href="statistics.html"><span class="nav-ico">📊</span>الإحصائيات</a>
+    <a href="focus.html"><span class="nav-ico">🧠</span>التركيز</a>
+    <a href="tools.html"><span class="nav-ico">🛠️</span>الأدوات</a>
+    <a href="community.html"><span class="nav-ico">💬</span>المجتمع</a>
+    <a href="profile.html"><span class="nav-ico">👤</span>الإعدادات</a>
+  </div>
+  <button class="fab" id="fabBtn" type="button" aria-label="القائمة">☰</button>
+
+  <footer class="footer">منصة تقدّم © <span id="year"></span></footer>
+
+  <script type="module" src="firebase.js"></script>
+
+  <script src="data.js"></script>
+  <script src="ui.js"></script>
+  <script src="auth.js"></script>
+  <script src="curriculum.js"></script>
+  <script src="progress.js"></script>
+  <script src="achievements.js"></script>
+  <script src="search.js"></script>
+  <script src="statistics.js"></script>
+  <script src="focus.js"></script>
+  <script src="exams.js"></script>
+  <script src="tasks.js"></script>
+  <script src="grades.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    (function () {
+      (async function () {
+        const user = await Auth.requireAuth();
+        if (!user) return;
+
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // تهيئة الامتحانات
+        Exams.init('#examForm', '#examsList');
+      })();
+    })();
+  </script>
+</body>
+</html>
