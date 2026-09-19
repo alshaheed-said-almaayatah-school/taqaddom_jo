@@ -10,6 +10,23 @@
 </head>
 <body>
 
+  <!-- Loading -->
+  <div id="loading" class="loading-screen">
+    <div class="loading-logo"><img src="logo.png" alt="تقدّم" /></div>
+    <div class="loading-spinner"></div>
+    <p class="loading-text">جاري التحميل…</p>
+  </div>
+
+  <!-- Offline -->
+  <div id="offline" class="offline-screen hidden">
+    <div class="offline-card">
+      <span class="offline-ico">📡</span>
+      <h2>لا يوجد اتصال بالإنترنت</h2>
+      <p>هذه المنصة تحتاج اتصالًا دائمًا.</p>
+      <button class="btn primary" onclick="location.reload()">إعادة المحاولة</button>
+    </div>
+  </div>
+
   <header class="header">
     <div class="container header-inner">
       <a href="index.html" class="brand">
@@ -27,6 +44,7 @@
         <button id="tabRegister" type="button" role="tab">إنشاء حساب</button>
       </div>
 
+      <!-- Login Form -->
       <form id="formLogin" autocomplete="on" novalidate>
         <div class="field">
           <label for="loginEmail">البريد الإلكتروني</label>
@@ -37,13 +55,17 @@
           <input type="password" id="loginPass" autocomplete="current-password" placeholder="••••••" required />
         </div>
         <div class="error" id="loginError"></div>
-        <button type="submit" class="btn primary block mt-2">دخول</button>
+        <button type="submit" class="btn primary block mt-2" id="loginSubmit">دخول</button>
+        <p class="tiny center mt-2">
+          <a href="#" id="forgotLink">نسيت كلمة المرور؟</a>
+        </p>
       </form>
 
+      <!-- Register Form -->
       <form id="formRegister" autocomplete="on" novalidate class="hidden">
         <div class="field">
           <label for="regName">الاسم</label>
-          <input type="text" id="regName" autocomplete="name" placeholder="اسمك الكامل" required />
+          <input type="text" id="regName" autocomplete="name" placeholder="اسمك الكامل" required minlength="2" />
         </div>
         <div class="field">
           <label for="regEmail">البريد الإلكتروني</label>
@@ -53,14 +75,22 @@
           <label for="regPass">كلمة المرور</label>
           <input type="password" id="regPass" autocomplete="new-password" placeholder="6 أحرف على الأقل" minlength="6" required />
         </div>
+        <div class="field">
+          <label for="regPass2">تأكيد كلمة المرور</label>
+          <input type="password" id="regPass2" autocomplete="new-password" placeholder="أعد كلمة المرور" required />
+        </div>
         <div class="error" id="regError"></div>
-        <button type="submit" class="btn primary block mt-2">إنشاء الحساب</button>
+        <button type="submit" class="btn primary block mt-2" id="regSubmit">إنشاء الحساب</button>
       </form>
 
-      <p class="auth-foot">بياناتك تُحفظ محليًا على جهازك فقط.</p>
+      <p class="auth-foot">بياناتك محفوظة بشكل آمن على السحابة.</p>
     </div>
   </main>
 
+  <!-- Firebase -->
+  <script type="module" src="firebase.js"></script>
+
+  <!-- Core Scripts -->
   <script src="data.js"></script>
   <script src="ui.js"></script>
   <script src="auth.js"></script>
@@ -74,12 +104,15 @@
 
   <script>
     (function () {
-      const tabLogin    = document.getElementById('tabLogin');
-      const tabRegister = document.getElementById('tabRegister');
-      const formLogin   = document.getElementById('formLogin');
-      const formRegister= document.getElementById('formRegister');
-      const errLogin    = document.getElementById('loginError');
-      const errRegister = document.getElementById('regError');
+      const tabLogin     = document.getElementById('tabLogin');
+      const tabRegister  = document.getElementById('tabRegister');
+      const formLogin    = document.getElementById('formLogin');
+      const formRegister = document.getElementById('formRegister');
+      const errLogin     = document.getElementById('loginError');
+      const errRegister  = document.getElementById('regError');
+      const loginSubmit  = document.getElementById('loginSubmit');
+      const regSubmit    = document.getElementById('regSubmit');
+      const forgotLink   = document.getElementById('forgotLink');
 
       function switchTo(mode) {
         const isLogin = mode === 'login';
@@ -96,32 +129,109 @@
 
       const params = new URLSearchParams(location.search);
       if (params.get('mode') === 'register') switchTo('register');
-      if (Auth.currentUser()) location.replace('dashboard.html');
 
-      formLogin.addEventListener('submit', function (e) {
+      // مراقبة الحالة — إذا مسجّل → dashboard
+      function watchAuth() {
+        if (!window.FB || !window.FB.onAuthStateChanged) {
+          setTimeout(watchAuth, 100);
+          return;
+        }
+
+        FB.onAuthStateChanged(FB.auth, function (user) {
+          if (user) {
+            location.replace('dashboard.html');
+            return;
+          }
+          const loading = document.getElementById('loading');
+          if (loading) loading.classList.add('hidden');
+        });
+      }
+      watchAuth();
+
+      // ---------- تسجيل الدخول ----------
+      formLogin.addEventListener('submit', async function (e) {
         e.preventDefault();
         errLogin.textContent = '';
-        const res = Auth.login({
+        loginSubmit.disabled = true;
+        loginSubmit.textContent = 'جاري الدخول…';
+
+        const res = await Auth.login({
           email: document.getElementById('loginEmail').value,
           password: document.getElementById('loginPass').value
         });
-        if (!res.ok) { errLogin.textContent = res.error; return; }
-        UI.toast('أهلاً بعودتك، ' + res.user.name + ' 👋', 'success');
-        setTimeout(function () { location.href = 'dashboard.html'; }, 350);
+
+        if (!res.ok) {
+          errLogin.textContent = res.error;
+          loginSubmit.disabled = false;
+          loginSubmit.textContent = 'دخول';
+          return;
+        }
+
+        UI.toast('أهلاً بعودتك 👋', 'success');
+        setTimeout(function () { location.replace('dashboard.html'); }, 400);
       });
 
-      formRegister.addEventListener('submit', function (e) {
+      // ---------- إنشاء حساب ----------
+      formRegister.addEventListener('submit', async function (e) {
         e.preventDefault();
         errRegister.textContent = '';
-        const res = Auth.register({
+
+        const pass  = document.getElementById('regPass').value;
+        const pass2 = document.getElementById('regPass2').value;
+
+        if (pass !== pass2) {
+          errRegister.textContent = 'كلمتا المرور غير متطابقتين.';
+          return;
+        }
+
+        regSubmit.disabled = true;
+        regSubmit.textContent = 'جاري الإنشاء…';
+
+        const res = await Auth.register({
           name: document.getElementById('regName').value,
           email: document.getElementById('regEmail').value,
-          password: document.getElementById('regPass').value
+          password: pass
         });
-        if (!res.ok) { errRegister.textContent = res.error; return; }
+
+        if (!res.ok) {
+          errRegister.textContent = res.error;
+          regSubmit.disabled = false;
+          regSubmit.textContent = 'إنشاء الحساب';
+          return;
+        }
+
         UI.toast('تم إنشاء حسابك بنجاح 🎉', 'success');
-        setTimeout(function () { location.href = 'dashboard.html'; }, 450);
+        setTimeout(function () { location.replace('dashboard.html'); }, 500);
       });
+
+      // ---------- نسيت كلمة المرور ----------
+      forgotLink.addEventListener('click', async function (e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        if (!email) {
+          errLogin.textContent = 'أدخل بريدك أولًا في خانة البريد.';
+          return;
+        }
+        const res = await Auth.resetPassword(email);
+        if (!res.ok) {
+          errLogin.textContent = res.error;
+          return;
+        }
+        UI.toast('أرسلنا رابط الاستعادة إلى بريدك 📧', 'success', 5000);
+      });
+
+      // فحص الاتصال
+      function checkOnline() {
+        const offline = document.getElementById('offline');
+        if (!navigator.onLine) {
+          offline.classList.remove('hidden');
+        } else {
+          offline.classList.add('hidden');
+        }
+      }
+      window.addEventListener('online', checkOnline);
+      window.addEventListener('offline', checkOnline);
+      checkOnline();
     })();
   </script>
 </body>
