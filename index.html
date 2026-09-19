@@ -10,6 +10,32 @@
 </head>
 <body>
 
+  <!-- ============================================================
+       Loading Screen
+       ============================================================ -->
+  <div id="loading" class="loading-screen">
+    <div class="loading-logo">
+      <img src="logo.png" alt="تقدّم" />
+    </div>
+    <div class="loading-spinner"></div>
+    <p class="loading-text">جاري التحميل…</p>
+  </div>
+
+  <!-- ============================================================
+       Offline Screen
+       ============================================================ -->
+  <div id="offline" class="offline-screen hidden">
+    <div class="offline-card">
+      <span class="offline-ico">📡</span>
+      <h2>لا يوجد اتصال بالإنترنت</h2>
+      <p>هذه المنصة تحتاج اتصالًا دائمًا لمزامنة تقدمك.</p>
+      <button class="btn primary" onclick="location.reload()">إعادة المحاولة</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       Header
+       ============================================================ -->
   <header class="header">
     <div class="container header-inner">
       <a href="index.html" class="brand">
@@ -18,25 +44,29 @@
       </a>
       <div class="row">
         <button class="icon-btn" data-theme-toggle type="button" aria-label="تبديل الوضع">🌙</button>
-        <a href="profile.html" class="icon-btn" data-require-auth style="display:none" aria-label="حسابي">👤</a>
-        <a href="login.html" class="icon-btn" data-require-guest aria-label="تسجيل الدخول">↪</a>
+        <a href="profile.html" class="icon-btn hidden" id="profileBtn" aria-label="حسابي">👤</a>
+        <a href="login.html" class="icon-btn" id="loginBtn" aria-label="تسجيل الدخول">↪</a>
       </div>
     </div>
   </header>
 
+  <!-- ============================================================
+       Main
+       ============================================================ -->
   <main>
+
     <section class="hero">
-      <span class="hero-badge" data-require-guest>📚 للصف العاشر — الفصل الأول</span>
+      <span class="hero-badge" id="heroBadge">📚 للصف العاشر — الفصل الأول</span>
       <h1>تقدّم بخطوة كل يوم</h1>
       <p class="subtitle">منصّتك لتنظيم الدراسة، متابعة إنجاز المنهج، والتركيز على ما يهمّ فعلاً. مصمّمة لطلاب الصف العاشر — جيل 2011.</p>
 
-      <div class="hero-actions" data-require-guest>
+      <div class="hero-actions" id="guestActions">
         <a href="login.html?mode=register" class="btn primary">ابدأ الآن</a>
         <a href="login.html" class="btn ghost">تسجيل الدخول</a>
         <a href="#features" class="btn ghost">استكشف المنصة</a>
       </div>
 
-      <div class="hero-actions" data-require-auth style="display:none">
+      <div class="hero-actions hidden" id="authActions">
         <a href="dashboard.html" class="btn primary">اذهب إلى الرئيسية →</a>
         <a href="#features" class="btn ghost">استكشف المنصة</a>
       </div>
@@ -75,7 +105,7 @@
       </article>
     </section>
 
-    <section class="container section" data-require-guest>
+    <section class="container section" id="ctaSection">
       <div class="card cta-card">
         <h2 class="mb-1">جاهز تبدأ؟</h2>
         <p class="muted mb-2">أنشئ حسابك في ثوانٍ، وابدأ بتتبّع تقدمك في المنهج اليوم.</p>
@@ -87,10 +117,21 @@
     </section>
   </main>
 
+  <!-- ============================================================
+       Footer
+       ============================================================ -->
   <footer class="footer">
     <p>منصة تقدّم © <span id="year"></span> — مجتمع جيل 2011</p>
   </footer>
 
+  <!-- ============================================================
+       Firebase (first — type="module")
+       ============================================================ -->
+  <script type="module" src="firebase.js"></script>
+
+  <!-- ============================================================
+       Core Scripts
+       ============================================================ -->
   <script src="data.js"></script>
   <script src="ui.js"></script>
   <script src="auth.js"></script>
@@ -102,8 +143,66 @@
   <script src="focus.js"></script>
   <script src="app.js"></script>
 
+  <!-- ============================================================
+       Page Script
+       ============================================================ -->
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+    (function () {
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      // مراقبة حالة تسجيل الدخول
+      function watchAuth() {
+        if (!window.FB || !window.FB.onAuthStateChanged) {
+          setTimeout(watchAuth, 100);
+          return;
+        }
+
+        FB.onAuthStateChanged(FB.auth, function (user) {
+          const guestActions  = document.getElementById('guestActions');
+          const authActions   = document.getElementById('authActions');
+          const loginBtn      = document.getElementById('loginBtn');
+          const profileBtn    = document.getElementById('profileBtn');
+          const ctaSection    = document.getElementById('ctaSection');
+          const heroBadge     = document.getElementById('heroBadge');
+
+          if (user) {
+            guestActions.classList.add('hidden');
+            authActions.classList.remove('hidden');
+            loginBtn.classList.add('hidden');
+            profileBtn.classList.remove('hidden');
+            ctaSection.classList.add('hidden');
+            heroBadge.textContent = '👋 أهلاً بعودتك';
+          } else {
+            guestActions.classList.remove('hidden');
+            authActions.classList.add('hidden');
+            loginBtn.classList.remove('hidden');
+            profileBtn.classList.add('hidden');
+            ctaSection.classList.remove('hidden');
+            heroBadge.textContent = '📚 للصف العاشر — الفصل الأول';
+          }
+
+          // إخفاء شاشة التحميل
+          const loading = document.getElementById('loading');
+          if (loading) loading.classList.add('hidden');
+        });
+      }
+
+      watchAuth();
+
+      // فحص الاتصال بالإنترنت
+      function checkOnline() {
+        const offline = document.getElementById('offline');
+        if (!navigator.onLine) {
+          offline.classList.remove('hidden');
+        } else {
+          offline.classList.add('hidden');
+        }
+      }
+
+      window.addEventListener('online', checkOnline);
+      window.addEventListener('offline', checkOnline);
+      checkOnline();
+    })();
   </script>
 </body>
 </html>
