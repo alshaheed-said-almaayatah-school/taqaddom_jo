@@ -1,23 +1,15 @@
 /* ============================================================
    search.js
-   بحث موحّد في المنهج — مواد / وحدات / دروس
-
-   يعتمد على: Curriculum (curriculum.js) + Progress (progress.js)
+   بحث موحّد في المنهج
+   ⚠️ يعتمد على Curriculum + Progress + UI
    ============================================================ */
 
 window.Search = (function () {
 
-  /* ============================================================
-     بحث أساسي
-     ============================================================ */
-
   function query(q, limit) {
     limit = limit || 25;
     const raw = String(q || '').trim();
-
-    if (!raw) {
-      return { subjects: [], lessons: [], empty: true };
-    }
+    if (!raw) return { subjects: [], lessons: [], empty: true };
 
     const res = Curriculum.search(raw, limit);
     return {
@@ -27,13 +19,8 @@ window.Search = (function () {
     };
   }
 
-  /* ============================================================
-     بحث مُثرى (مع حالة الدرس ونسبة المادة)
-     ============================================================ */
-
   function enriched(q, limit) {
     const r = query(q, limit);
-
     return {
       subjects: r.subjects.map(function (s) {
         const c = Progress.subjectCounts(s.id);
@@ -62,12 +49,7 @@ window.Search = (function () {
     };
   }
 
-  /* ============================================================
-     بناء HTML للنتائج
-     ============================================================ */
-
-  function renderResults(q, opts) {
-    opts = opts || {};
+  function renderResults(q) {
     const r = enriched(q);
 
     if (r.empty) {
@@ -96,12 +78,7 @@ window.Search = (function () {
     return subjectHits + lessonHits;
   }
 
-  /* ============================================================
-     ربط صندوق بحث بعنصر
-     ============================================================ */
-
-  function bind(inputSelector, resultsSelector, opts) {
-    opts = opts || {};
+  function bind(inputSelector, resultsSelector) {
     const input = UI.el(inputSelector);
     const box   = UI.el(resultsSelector);
     if (!input || !box) return;
@@ -118,10 +95,9 @@ window.Search = (function () {
           return;
         }
 
-        box.innerHTML = renderResults(q, opts);
+        box.innerHTML = renderResults(q);
         box.classList.remove('hidden');
 
-        /* النقر على مادة → فتحها في صفحة subjects */
         UI.els('[data-subject]', box).forEach(function (el) {
           el.addEventListener('click', function () {
             const id = el.dataset.subject;
@@ -139,14 +115,12 @@ window.Search = (function () {
       }, 120);
     });
 
-    /* إغلاق عند الضغط خارج الصندوق */
     document.addEventListener('click', function (e) {
       if (!e.target.closest(inputSelector) && !e.target.closest(resultsSelector)) {
         box.classList.add('hidden');
       }
     });
 
-    /* إغلاق بمفتاح Escape */
     input.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
         box.classList.add('hidden');
@@ -154,10 +128,6 @@ window.Search = (function () {
       }
     });
   }
-
-  /* ============================================================
-     التصدير
-     ============================================================ */
 
   return {
     query: query,
