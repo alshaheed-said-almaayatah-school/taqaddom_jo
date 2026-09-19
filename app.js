@@ -1,17 +1,12 @@
 /* ============================================================
    app.js
-   Bootstrap عام — يُحمَّل آخر ملف من ملفات JS
-
-   ⚠️ يعتمد على: UI, Auth, Store
+   Bootstrap عام — يُحمَّل آخر ملف
+   ⚠️ يعتمد على UI, Auth, Store
    ============================================================ */
 
 window.App = (function () {
 
-  /* ============================================================
-     تهيئة الصفحة
-     ============================================================ */
   async function init() {
-
     /* ---------- Theme ---------- */
     UI.initTheme();
 
@@ -24,21 +19,25 @@ window.App = (function () {
       }
     });
 
-    /* ---------- Online Check ---------- */
+    /* ---------- Online ---------- */
     UI.initOnline();
 
-    /* ---------- Floating Menu (FAB) ---------- */
+    /* ---------- FAB ---------- */
     UI.initFAB();
 
     /* ---------- انتظار Firebase ---------- */
-    await Auth.ready;
+    try {
+      await Auth.ready;
+    } catch (e) {
+      console.error('[App] Auth.ready failed:', e);
+    }
 
     const user = Auth.currentUser();
 
     /* ---------- إخفاء شاشة التحميل ---------- */
     UI.hideLoading();
 
-    /* ---------- اسم المستخدم في الواجهة ---------- */
+    /* ---------- اسم المستخدم ---------- */
     if (user) {
       UI.els('[data-user-name]').forEach(function (n) {
         n.textContent = user.name || 'طالب';
@@ -62,7 +61,6 @@ window.App = (function () {
     UI.els('[data-logout]').forEach(function (el) {
       el.addEventListener('click', async function (e) {
         e.preventDefault();
-
         const ok = await UI.confirm({
           title: 'تسجيل الخروج',
           message: 'هل تريد إنهاء الجلسة؟',
@@ -71,25 +69,10 @@ window.App = (function () {
           danger: true
         });
         if (!ok) return;
-
         await Auth.logout();
         location.replace('login.html');
       });
     });
-
-    /* ---------- حماية الصفحات ---------- */
-    const page = document.body.dataset.page || '';
-    const protectedPages = [
-      'dashboard', 'subjects', 'lesson',
-      'statistics', 'focus', 'tools',
-      'community', 'profile', 'exams',
-      'tasks', 'grades'
-    ];
-
-    if (protectedPages.indexOf(page) !== -1 && !user) {
-      location.replace('login.html');
-      return;
-    }
 
     /* ---------- السنة في الفوتر ---------- */
     UI.els('#year').forEach(function (el) {
@@ -100,6 +83,13 @@ window.App = (function () {
     document.addEventListener('auth:changed', function (e) {
       if (!e.detail) {
         // خرج المستخدم
+        const page = document.body.dataset.page || '';
+        const protectedPages = [
+          'dashboard', 'subjects', 'lesson',
+          'statistics', 'focus', 'tools',
+          'community', 'profile', 'exams',
+          'tasks', 'grades'
+        ];
         if (protectedPages.indexOf(page) !== -1) {
           location.replace('login.html');
         }
@@ -107,19 +97,11 @@ window.App = (function () {
     });
   }
 
-  /* ============================================================
-     التشغيل
-     ============================================================ */
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
 
-  /* ============================================================
-     التصدير
-     ============================================================ */
-  return {
-    init: init
-  };
+  return { init: init };
 })();
