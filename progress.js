@@ -1,15 +1,10 @@
 /* ============================================================
    progress.js
    حالات الدروس + الحسابات + Streak + الأهداف + الإنجازات
-
-   يعتمد على: Store (ui.js) + Curriculum (curriculum.js)
+   ⚠️ يعتمد على Store (ui.js) + Curriculum (curriculum.js)
    ============================================================ */
 
 window.Progress = (function () {
-
-  /* ============================================================
-     حالات الدرس
-     ============================================================ */
 
   const STATUS = {
     NOT_STARTED: 'notstarted',
@@ -23,12 +18,6 @@ window.Progress = (function () {
     done:       'مكتمل'
   };
 
-  const STATUS_COLOR = {
-    notstarted: 'muted',
-    inprogress: 'warning',
-    done:       'success'
-  };
-
   /* ============================================================
      قراءة / تعديل حالة درس
      ============================================================ */
@@ -37,7 +26,7 @@ window.Progress = (function () {
     return Store.getLessonStatus(lessonId);
   }
 
-  function setStatus(lessonId, status, opts) {
+  async function setStatus(lessonId, status, opts) {
     opts = opts || {};
     const lesson = Curriculum.getLesson(lessonId);
     if (!lesson) return false;
@@ -45,30 +34,27 @@ window.Progress = (function () {
     const prev = Store.getLessonStatus(lessonId);
     if (prev === status) return true;
 
-    Store.setLessonStatus(lessonId, status);
+    await Store.setLessonStatus(lessonId, status);
 
     if (!opts.silent) {
       if (status === STATUS.DONE) {
-        Store.logActivity('lesson', 'أكملت درس: ' + lesson.lesson_name, {
-          lesson_id: lessonId,
-          subject_id: lesson.subject_id
+        await Store.logActivity('lesson', 'أكملت درس: ' + lesson.lesson_name, {
+          lesson_id: lessonId, subject_id: lesson.subject_id
         });
-        touchStreak();
+        await touchStreak();
       } else if (status === STATUS.IN_PROGRESS) {
-        Store.logActivity('lesson', 'بدأت: ' + lesson.lesson_name, {
-          lesson_id: lessonId,
-          subject_id: lesson.subject_id
+        await Store.logActivity('lesson', 'بدأت: ' + lesson.lesson_name, {
+          lesson_id: lessonId, subject_id: lesson.subject_id
         });
-        touchStreak();
+        await touchStreak();
       } else if (status === STATUS.NOT_STARTED && prev === STATUS.DONE) {
-        Store.logActivity('lesson', 'ألغيت إكمال: ' + lesson.lesson_name, {
-          lesson_id: lessonId,
-          subject_id: lesson.subject_id
+        await Store.logActivity('lesson', 'ألغيت إكمال: ' + lesson.lesson_name, {
+          lesson_id: lessonId, subject_id: lesson.subject_id
         });
       }
     }
 
-    checkAchievements();
+    await checkAchievements();
     return true;
   }
 
@@ -102,23 +88,14 @@ window.Progress = (function () {
     };
   }
 
-  function lessonCounts() {
-    return countStatuses(Curriculum.getAll());
-  }
-
-  function overall() {
-    return lessonCounts();
-  }
+  function lessonCounts() { return countStatuses(Curriculum.getAll()); }
+  function overall()      { return lessonCounts(); }
 
   function subjectCounts(subjectId) {
     const sub = Curriculum.getSubject(subjectId);
     if (!sub) return null;
-
     const lessons = [];
-    sub.units.forEach(function (u) {
-      u.lessons.forEach(function (l) { lessons.push(l); });
-    });
-
+    sub.units.forEach(function (u) { u.lessons.forEach(function (l) { lessons.push(l); }); });
     const c = countStatuses(lessons);
     c.subjectId = sub.id;
     c.name = sub.name;
@@ -128,12 +105,8 @@ window.Progress = (function () {
   function unitCounts(subjectId, unitNumber) {
     const sub = Curriculum.getSubject(subjectId);
     if (!sub) return null;
-
-    const unit = sub.units.find(function (u) {
-      return u.unit_number === Number(unitNumber);
-    });
+    const unit = sub.units.find(function (u) { return u.unit_number === Number(unitNumber); });
     if (!unit) return null;
-
     const c = countStatuses(unit.lessons);
     c.unitNumber = unit.unit_number;
     c.name = unit.name;
@@ -163,7 +136,7 @@ window.Progress = (function () {
   }
 
   /* ============================================================
-     Streak — أيام النشاط المتتالية
+     Streak
      ============================================================ */
 
   function dayKey(ts) {
@@ -174,23 +147,19 @@ window.Progress = (function () {
     return y + '-' + m + '-' + dd;
   }
 
-  function readStreak() {
-    return Store.read(Store.KEYS.STREAK, { days: [] });
-  }
-
-  function touchStreak() {
-    const s = readStreak();
+  async function touchStreak() {
+    const s = Store.getStreak();
     const today = dayKey();
     if (s.days.indexOf(today) === -1) {
       s.days.push(today);
       s.days = s.days.slice(-180);
-      Store.write(Store.KEYS.STREAK, s);
+      await Store.setStreak(s);
     }
   }
 
   function currentStreak() {
-    const s = readStreak();
-    if (!s.days.length) return 0;
+    const s = Store.getStreak();
+    if (!s.days || !s.days.length) return 0;
 
     const set = {};
     s.days.forEach(function (d) { set[d] = true; });
@@ -198,9 +167,7 @@ window.Progress = (function () {
     let streak = 0;
     const cursor = new Date();
 
-    if (!set[dayKey(cursor)]) {
-      cursor.setDate(cursor.getDate() - 1);
-    }
+    if (!set[dayKey(cursor)]) cursor.setDate(cursor.getDate() - 1);
 
     while (set[dayKey(cursor)]) {
       streak++;
@@ -210,7 +177,8 @@ window.Progress = (function () {
   }
 
   function totalActiveDays() {
-    return readStreak().days.length;
+    const s = Store.getStreak();
+    return (s.days && s.days.length) || 0;
   }
 
   /* ============================================================
@@ -235,18 +203,14 @@ window.Progress = (function () {
     let count = 0;
     Object.keys(p).forEach(function (k) {
       const entry = p[k];
-      if (entry && entry.status === STATUS.DONE && dayKey(entry.updatedAt) === today) {
-        count++;
-      }
+      if (entry && entry.status === STATUS.DONE && dayKey(entry.updatedAt) === today) count++;
     });
     return count;
   }
 
   function focusSessionsToday() {
     const today = dayKey();
-    return Store.getFocusSessions().filter(function (s) {
-      return dayKey(s.at) === today;
-    }).length;
+    return Store.getFocusSessions().filter(function (s) { return dayKey(s.at) === today; }).length;
   }
 
   function goalProgress(goal) {
@@ -262,12 +226,8 @@ window.Progress = (function () {
     return getGoals().map(function (g) {
       const value = goalProgress(g);
       return {
-        id: g.id,
-        type: g.type,
-        label: g.label,
-        target: g.target,
-        value: value,
-        achieved: value >= g.target
+        id: g.id, type: g.type, label: g.label, target: g.target,
+        value: value, achieved: value >= g.target
       };
     });
   }
@@ -292,12 +252,10 @@ window.Progress = (function () {
     { id: 'curriculum_done', icon: '🎉', title: 'أكملت المنهج',   desc: 'أنجزت كل الدروس' }
   ];
 
-  function readAchievements() {
-    return Store.read(Store.KEYS.ACHIEVEMENTS, {});
-  }
+  function readAchievements() { return Store.getAchievements(); }
 
-  function checkAchievements() {
-    const owned = readAchievements();
+  async function checkAchievements() {
+    const owned = Object.assign({}, readAchievements());
     const c = lessonCounts();
     const added = [];
 
@@ -306,9 +264,7 @@ window.Progress = (function () {
         owned[id] = Date.now();
         added.push(id);
         const def = ACHIEVEMENTS_DEF.find(function (a) { return a.id === id; });
-        if (def) {
-          Store.logActivity('achievement', 'إنجاز: ' + def.title, { achievement_id: id });
-        }
+        if (def) Store.logActivity('achievement', 'إنجاز: ' + def.title, { achievement_id: id });
       }
     }
 
@@ -321,7 +277,6 @@ window.Progress = (function () {
     if (c.percent >= 75) unlock('percent_75');
     if (c.total > 0 && c.done === c.total) unlock('curriculum_done');
 
-    /* وحدة كاملة */
     const hasUnit = Curriculum.getSubjects().some(function (sub) {
       return sub.units.some(function (u) {
         const uc = unitCounts(sub.id, u.unit_number);
@@ -330,21 +285,18 @@ window.Progress = (function () {
     });
     if (hasUnit) unlock('first_unit');
 
-    /* مادة كاملة */
     const hasSubject = allSubjectsCounts().some(function (s) {
       return s.total > 0 && s.done === s.total;
     });
     if (hasSubject) unlock('first_subject');
 
-    /* تركيز */
     if (Store.getFocusSessions().length >= 1) unlock('first_focus');
 
-    /* Streak */
     const st = currentStreak();
     if (st >= 3) unlock('streak_3');
     if (st >= 7) unlock('streak_7');
 
-    if (added.length) Store.write(Store.KEYS.ACHIEVEMENTS, owned);
+    if (added.length) await Store.setAchievements(owned);
     return added;
   }
 
@@ -356,14 +308,9 @@ window.Progress = (function () {
     return Store.getActivity().slice(0, limit || 8);
   }
 
-  /* ============================================================
-     التصدير
-     ============================================================ */
-
   return {
     STATUS: STATUS,
     STATUS_LABEL: STATUS_LABEL,
-    STATUS_COLOR: STATUS_COLOR,
     ACHIEVEMENTS_DEF: ACHIEVEMENTS_DEF,
 
     getStatus: getStatus,
