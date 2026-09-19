@@ -26,11 +26,8 @@ window.App = (function () {
     UI.initFAB();
 
     /* ---------- انتظار Firebase ---------- */
-    try {
-      await Auth.ready;
-    } catch (e) {
-      console.error('[App] Auth.ready failed:', e);
-    }
+    try { await Auth.ready; }
+    catch (e) { console.error('[App] Auth.ready failed:', e); }
 
     const user = Auth.currentUser();
 
@@ -82,7 +79,6 @@ window.App = (function () {
     /* ---------- إشعار تغيير المستخدم ---------- */
     document.addEventListener('auth:changed', function (e) {
       if (!e.detail) {
-        // خرج المستخدم
         const page = document.body.dataset.page || '';
         const protectedPages = [
           'dashboard', 'subjects', 'lesson',
