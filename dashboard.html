@@ -5,15 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0e1116" />
   <title>الرئيسية | منصة تقدّم</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f8cff'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='system-ui' font-weight='900' font-size='40' fill='white'%3E%D8%AA%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" href="logo.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body data-page="dashboard">
 
+  <!-- Loading -->
+  <div id="loading" class="loading-screen">
+    <div class="loading-logo"><img src="logo.png" alt="تقدّم" /></div>
+    <div class="loading-spinner"></div>
+    <p class="loading-text">جاري التحميل…</p>
+  </div>
+
+  <!-- Offline -->
+  <div id="offline" class="offline-screen hidden">
+    <div class="offline-card">
+      <span class="offline-ico">📡</span>
+      <h2>لا يوجد اتصال بالإنترنت</h2>
+      <p>هذه المنصة تحتاج اتصالًا دائمًا.</p>
+      <button class="btn primary" onclick="location.reload()">إعادة المحاولة</button>
+    </div>
+  </div>
+
+  <!-- Header -->
   <header class="header">
     <div class="container header-inner">
       <a href="dashboard.html" class="brand">
-        <span class="brand-logo">ت</span>
+        <span class="brand-logo"><img src="logo.png" alt="تقدّم" /></span>
         <span>منصة تقدّم<small>مجتمع جيل 2011</small></span>
       </a>
       <div class="row">
@@ -23,8 +41,10 @@
     </div>
   </header>
 
+  <!-- Main -->
   <main class="container section">
 
+    <!-- ترحيب -->
     <section class="card hero-card mb-3">
       <h1 class="hero-greet">أهلاً <span data-user-name>—</span> 👋</h1>
       <p class="hero-sub">جاهز تكمل تقدّمك اليوم؟</p>
@@ -34,6 +54,7 @@
       </div>
     </section>
 
+    <!-- إحصائيات سريعة -->
     <section class="grid grid-2 mb-3">
       <div class="card stat-card">
         <div class="stat-head">
@@ -56,45 +77,65 @@
 
     <section class="grid grid-3 mb-3">
       <div class="mini-card"><span class="mini-num" id="cntDone">0</span><span class="mini-lbl">مكتمل</span></div>
-      <div class="mini-card"><span class="mini-num" id="cntInp">0</span><span class="mini-lbl">منتصف الدرس</span></div>
+      <div class="mini-card"><span class="mini-num" id="cntInp">0</span><span class="mini-lbl">منتصف</span></div>
       <div class="mini-card"><span class="mini-num" id="cntNot">0</span><span class="mini-lbl">لم يبدأ</span></div>
     </section>
 
+    <!-- روابط سريعة -->
     <section class="mb-3">
-      <div class="row-between mb-2">
-        <h2>📚 تقدم المواد</h2>
-        <a href="subjects.html" class="tiny">عرض الكل →</a>
+      <h2 class="mb-2">🚀 روابط سريعة</h2>
+      <div class="tools-grid">
+        <a href="subjects.html" class="tool-card card hover">
+          <span class="tool-ico">📚</span>
+          <strong>المنهج</strong>
+          <p class="tiny mb-0">تابع دروسك وحدّث حالتها.</p>
+        </a>
+        <a href="focus.html" class="tool-card card hover">
+          <span class="tool-ico">🧠</span>
+          <strong>تركيز</strong>
+          <p class="tiny mb-0">Pomodoro واستراتيجيات.</p>
+        </a>
+        <a href="tasks.html" class="tool-card card hover">
+          <span class="tool-ico">✅</span>
+          <strong>المهام</strong>
+          <p class="tiny mb-0">قائمة مهامك اليومية.</p>
+        </a>
+        <a href="exams.html" class="tool-card card hover">
+          <span class="tool-ico">📅</span>
+          <strong>الامتحانات</strong>
+          <p class="tiny mb-0">عدّاد تنازلي للمواعيد.</p>
+        </a>
       </div>
-      <div id="subjectsList" class="subject-list"></div>
     </section>
 
-    <section class="mb-3">
-      <h2 class="mb-2">🎯 أهدافك اليوم</h2>
-      <div id="goalsList" class="goals-list"></div>
-    </section>
-
-    <section class="mb-3">
-      <h2 class="mb-2">🕒 النشاط الأخير</h2>
-      <div id="activityList" class="activity-list"></div>
-    </section>
-
-    <section class="mb-3">
-      <h2 class="mb-2">🏆 إنجازاتك</h2>
-      <div id="achievementsList"></div>
+    <section class="card center mb-3">
+      <p class="muted">سيتم إضافة المزيد قريبًا 🚀</p>
     </section>
 
   </main>
 
-  <nav class="bottom-nav">
+  <!-- FAB -->
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <div class="floating-menu" id="floatingMenu">
     <a href="dashboard.html"><span class="nav-ico">🏠</span>الرئيسية</a>
     <a href="subjects.html"><span class="nav-ico">📚</span>المنهج</a>
-    <a href="statistics.html"><span class="nav-ico">📊</span>إحصاءاتي</a>
-    <a href="focus.html"><span class="nav-ico">🧠</span>تركيز</a>
+    <a href="exams.html"><span class="nav-ico">📅</span>الامتحانات</a>
+    <a href="tasks.html"><span class="nav-ico">✅</span>المهام</a>
+    <a href="grades.html"><span class="nav-ico">📈</span>المعدل</a>
+    <a href="statistics.html"><span class="nav-ico">📊</span>الإحصائيات</a>
+    <a href="focus.html"><span class="nav-ico">🧠</span>التركيز</a>
+    <a href="tools.html"><span class="nav-ico">🛠️</span>الأدوات</a>
     <a href="community.html"><span class="nav-ico">💬</span>المجتمع</a>
-  </nav>
+    <a href="profile.html"><span class="nav-ico">👤</span>الإعدادات</a>
+  </div>
+  <button class="fab" id="fabBtn" type="button" aria-label="القائمة">☰</button>
 
   <footer class="footer">منصة تقدّم © <span id="year"></span></footer>
 
+  <!-- Firebase -->
+  <script type="module" src="firebase.js"></script>
+
+  <!-- Core -->
   <script src="data.js"></script>
   <script src="ui.js"></script>
   <script src="auth.js"></script>
@@ -108,88 +149,34 @@
 
   <script>
     (function () {
-      const user = Auth.requireAuth();
-      if (!user) return;
-      document.getElementById('year').textContent = new Date().getFullYear();
+      (async function () {
+        const user = await Auth.requireAuth();
+        if (!user) return;
 
-      function renderOverview() {
-        const o = Progress.overall();
-        document.getElementById('totalPct').textContent  = o.percent + '%';
-        document.getElementById('totalBar').style.width  = o.percent + '%';
-        document.getElementById('totalText').textContent = o.done + ' من ' + o.total + ' درسًا مكتمل';
-        document.getElementById('cntDone').textContent = o.done;
-        document.getElementById('cntInp').textContent  = o.inprogress;
-        document.getElementById('cntNot').textContent  = o.notstarted;
-      }
+        // السنة
+        const y = document.getElementById('year');
+        if (y) y.textContent = new Date().getFullYear();
 
-      function renderStreak() {
-        document.getElementById('streakNum').textContent = Progress.currentStreak();
-      }
+        // عرض البيانات الأساسية إذا Store محمَّل
+        try {
+          if (window.Store && window.Progress) {
+            const o = Progress.overall();
+            document.getElementById('totalPct').textContent = o.percent + '%';
+            document.getElementById('totalBar').style.width = o.percent + '%';
+            document.getElementById('totalText').textContent = o.done + ' من ' + o.total + ' درسًا مكتمل';
+            document.getElementById('cntDone').textContent = o.done;
+            document.getElementById('cntInp').textContent = o.inprogress;
+            document.getElementById('cntNot').textContent = o.notstarted;
+            document.getElementById('streakNum').textContent = Progress.currentStreak();
+          }
+        } catch (e) {
+          console.warn('Dashboard stats:', e);
+        }
 
-      function renderSubjects() {
-        const list = Progress.allSubjectsCounts();
-        const root = document.getElementById('subjectsList');
-        if (!list.length) { root.innerHTML = '<p class="muted">لا توجد مواد.</p>'; return; }
-        root.innerHTML = list.map(function (s) {
-          return '<a class="subject-row card hover" href="subjects.html#s-' + s.subjectId + '">' +
-            '<div class="row-between">' +
-              '<strong>' + UI.escape(s.name) + '</strong>' +
-              '<span class="badge ' + (s.percent === 100 ? 'success' : s.percent > 0 ? 'info' : '') + '">' + s.percent + '%</span>' +
-            '</div>' +
-            '<div class="progress mt-1"><span style="width:' + s.percent + '%"></span></div>' +
-            '<div class="row-between tiny mt-1">' +
-              '<span>✓ ' + s.done + '</span>' +
-              '<span>◐ ' + s.inprogress + '</span>' +
-              '<span>○ ' + s.notstarted + '</span>' +
-            '</div>' +
-          '</a>';
-        }).join('');
-      }
-
-      function renderGoals() {
-        const goals = Progress.goalsWithProgress();
-        const root = document.getElementById('goalsList');
-        if (!goals.length) { root.innerHTML = '<p class="muted">لا أهداف.</p>'; return; }
-        root.innerHTML = goals.map(function (g) {
-          const pct = Math.min(100, Math.round((g.value / g.target) * 100));
-          return '<div class="goal-row card ' + (g.achieved ? 'goal-done' : '') + '">' +
-            '<div class="row-between">' +
-              '<span>' + (g.achieved ? '✅' : '⭕') + ' ' + UI.escape(g.label) + '</span>' +
-              '<span class="tiny">' + g.value + ' / ' + g.target + '</span>' +
-            '</div>' +
-            '<div class="progress mt-1"><span style="width:' + pct + '%"></span></div>' +
-          '</div>';
-        }).join('');
-      }
-
-      function renderActivity() {
-        const items = Progress.recentActivity(8);
-        const root = document.getElementById('activityList');
-        if (!items.length) { root.innerHTML = '<p class="muted">لا يوجد نشاط بعد.</p>'; return; }
-        const ico = function (t) {
-          return { lesson:'📘', achievement:'🏆', focus:'🧠', account:'👤', goal:'🎯' }[t] || '•';
-        };
-        root.innerHTML = items.map(function (a) {
-          return '<div class="activity-row">' +
-            '<span class="act-ico">' + ico(a.type) + '</span>' +
-            '<div class="grow">' +
-              '<div>' + UI.escape(a.message) + '</div>' +
-              '<div class="tiny">' + UI.fmtRelative(a.at) + '</div>' +
-            '</div>' +
-          '</div>';
-        }).join('');
-      }
-
-      function renderAchievements() {
-        Achievements.renderCompact('#achievementsList', 6);
-      }
-
-      renderOverview();
-      renderStreak();
-      renderSubjects();
-      renderGoals();
-      renderActivity();
-      renderAchievements();
+        // إخفاء شاشة التحميل (احتياط)
+        const loading = document.getElementById('loading');
+        if (loading) loading.classList.add('hidden');
+      })();
     })();
   </script>
 </body>
