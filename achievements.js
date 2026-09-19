@@ -1,18 +1,13 @@
 /* ============================================================
    achievements.js
-   عرض الإنجازات — المنطق في progress.js
-
-   يعتمد على: Store (ui.js) + Progress (progress.js)
+   عرض الإنجازات
+   ⚠️ يعتمد على Store (ui.js) + Progress (progress.js) + UI
    ============================================================ */
 
 window.Achievements = (function () {
 
-  /* ============================================================
-     قائمة الإنجازات
-     ============================================================ */
-
   function list() {
-    const owned = Store.read(Store.KEYS.ACHIEVEMENTS, {});
+    const owned = Store.getAchievements() || {};
     return Progress.ACHIEVEMENTS_DEF.map(function (a) {
       return {
         id: a.id,
@@ -25,13 +20,8 @@ window.Achievements = (function () {
     });
   }
 
-  function unlocked() {
-    return list().filter(function (a) { return a.unlocked; });
-  }
-
-  function locked() {
-    return list().filter(function (a) { return !a.unlocked; });
-  }
+  function unlocked() { return list().filter(function (a) { return a.unlocked; }); }
+  function locked()   { return list().filter(function (a) { return !a.unlocked; }); }
 
   function count() {
     const u = unlocked().length;
@@ -42,10 +32,6 @@ window.Achievements = (function () {
       percent: total === 0 ? 0 : Math.round((u / total) * 100)
     };
   }
-
-  /* ============================================================
-     عرض مصغّر — للـ Dashboard
-     ============================================================ */
 
   function renderCompact(containerSelector, max) {
     max = max || 6;
@@ -79,10 +65,6 @@ window.Achievements = (function () {
       '</div>';
   }
 
-  /* ============================================================
-     عرض كامل — لصفحة الإحصائيات
-     ============================================================ */
-
   function renderFull(containerSelector) {
     const root = UI.el(containerSelector);
     if (!root) return;
@@ -106,10 +88,6 @@ window.Achievements = (function () {
         }).join('') +
       '</div>';
   }
-
-  /* ============================================================
-     التصدير
-     ============================================================ */
 
   return {
     list: list,
