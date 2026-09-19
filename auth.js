@@ -1,51 +1,32 @@
 /* ============================================================
    auth.js
-   حسابات + جلسة (Firebase Authentication)
-   + تحميل بيانات المستخدم من Firestore
-
+   Firebase Auth + تحميل بيانات المستخدم
    ⚠️ يعتمد على window.FB + window.Store + window.UI
    ============================================================ */
 
 window.Auth = (function () {
 
-  /* ============================================================
-     حالة داخلية
-     ============================================================ */
   let currentUser = null;
   let readyResolve;
   const readyPromise = new Promise(function (res) { readyResolve = res; });
 
-  /* ============================================================
-     ترجمة أخطاء Firebase
-     ============================================================ */
+  /* ---------- ترجمة الأخطاء ---------- */
   function translateError(code) {
     switch (code) {
-      case 'auth/email-already-in-use':
-        return 'هذا البريد مسجّل مسبقًا.';
-      case 'auth/invalid-email':
-        return 'البريد الإلكتروني غير صحيح.';
-      case 'auth/weak-password':
-        return 'كلمة المرور ضعيفة — استخدم 6 أحرف على الأقل.';
-      case 'auth/user-not-found':
-        return 'لا يوجد حساب بهذا البريد.';
-      case 'auth/wrong-password':
-        return 'كلمة المرور غير صحيحة.';
-      case 'auth/invalid-credential':
-        return 'البريد أو كلمة المرور غير صحيحة.';
-      case 'auth/too-many-requests':
-        return 'محاولات كثيرة — حاول لاحقًا.';
-      case 'auth/network-request-failed':
-        return 'تحقق من اتصالك بالإنترنت.';
-      case 'auth/user-disabled':
-        return 'هذا الحساب معطّل.';
-      default:
-        return 'حدث خطأ — حاول مرة أخرى.';
+      case 'auth/email-already-in-use': return 'هذا البريد مسجّل مسبقًا.';
+      case 'auth/invalid-email':        return 'البريد الإلكتروني غير صحيح.';
+      case 'auth/weak-password':        return 'كلمة المرور ضعيفة — استخدم 6 أحرف على الأقل.';
+      case 'auth/user-not-found':       return 'لا يوجد حساب بهذا البريد.';
+      case 'auth/wrong-password':       return 'كلمة المرور غير صحيحة.';
+      case 'auth/invalid-credential':   return 'البريد أو كلمة المرور غير صحيحة.';
+      case 'auth/too-many-requests':    return 'محاولات كثيرة — حاول لاحقًا.';
+      case 'auth/network-request-failed': return 'تحقق من اتصالك بالإنترنت.';
+      case 'auth/user-disabled':        return 'هذا الحساب معطّل.';
+      case 'auth/operation-not-allowed': return 'التسجيل بالبريد غير مفعّل حاليًا.';
+      default:                          return 'حدث خطأ — حاول مرة أخرى.';
     }
   }
 
-  /* ============================================================
-     انتظار جهوزية Firebase
-     ============================================================ */
   function waitFB() {
     return new Promise(function (resolve) {
       (function check() {
@@ -55,9 +36,7 @@ window.Auth = (function () {
     });
   }
 
-  /* ============================================================
-     تسجيل حساب جديد
-     ============================================================ */
+  /* ---------- تسجيل حساب جديد ---------- */
   async function register(input) {
     input = input || {};
     const name     = String(input.name || '').trim();
@@ -79,27 +58,19 @@ window.Auth = (function () {
       const cred = await FB.createUserWithEmailAndPassword(FB.auth, email, password);
       const user = cred.user;
 
-      // تحديث اسم العرض في Firebase Auth
-      await FB.updateProfile(user, { displayName: name });
+      try { await FB.updateProfile(user, { displayName: name }); } catch (e) {}
 
-      // إنشاء مستند المستخدم في Firestore
       await FB.setDoc(FB.doc(FB.db, 'users', user.uid), {
-        profile: {
-          name: name,
-          email: email,
-          createdAt: Date.now()
-        },
+        profile: { name: name, email: email, createdAt: Date.now() },
         progress: {},
         achievements: {},
         streak: { days: [] },
         goals: [],
         focus: [],
         activity: [{
-          id: 'welcome',
-          type: 'account',
+          id: 'welcome', type: 'account',
           message: 'أنشأت حسابك في المنصة 🎉',
-          meta: {},
-          at: Date.now()
+          meta: {}, at: Date.now()
         }],
         tasks: [],
         exams: [],
@@ -114,9 +85,7 @@ window.Auth = (function () {
     }
   }
 
-  /* ============================================================
-     تسجيل الدخول
-     ============================================================ */
+  /* ---------- تسجيل الدخول ---------- */
   async function login(input) {
     input = input || {};
     const email    = String(input.email || '').trim().toLowerCase();
@@ -135,9 +104,7 @@ window.Auth = (function () {
     }
   }
 
-  /* ============================================================
-     تسجيل الخروج
-     ============================================================ */
+  /* ---------- تسجيل الخروج ---------- */
   async function logout() {
     try {
       await waitFB();
@@ -149,13 +116,10 @@ window.Auth = (function () {
     }
   }
 
-  /* ============================================================
-     نسيت كلمة المرور
-     ============================================================ */
+  /* ---------- نسيت كلمة المرور ---------- */
   async function resetPassword(email) {
     email = String(email || '').trim().toLowerCase();
     if (!email) return { ok: false, error: 'أدخل بريدك الإلكتروني.' };
-
     try {
       await waitFB();
       await FB.sendPasswordResetEmail(FB.auth, email);
@@ -166,16 +130,10 @@ window.Auth = (function () {
     }
   }
 
-  /* ============================================================
-     المستخدم الحالي
-     ============================================================ */
-  function currentUser() {
-    return currentUser;
-  }
+  /* ---------- المستخدم الحالي ---------- */
+  function currentUserFn() { return currentUser; }
 
-  /* ============================================================
-     حماية الصفحات
-     ============================================================ */
+  /* ---------- حماية الصفحات ---------- */
   async function requireAuth() {
     await readyPromise;
     if (!currentUser) {
@@ -185,17 +143,7 @@ window.Auth = (function () {
     return currentUser;
   }
 
-  function requireGuest() {
-    if (currentUser) {
-      location.replace('dashboard.html');
-      return false;
-    }
-    return true;
-  }
-
-  /* ============================================================
-     المزامنة الفورية (onAuthStateChanged)
-     ============================================================ */
+  /* ---------- المزامنة الفورية ---------- */
   (async function init() {
     await waitFB();
 
@@ -212,31 +160,25 @@ window.Auth = (function () {
           await Store.loadAll();
         } catch (err) {
           console.error('[Auth] load user data:', err);
-          UI.toast('تعذّر تحميل بياناتك، حاول تحديث الصفحة.', 'error', 5000);
+          try { UI.toast('تعذّر تحميل بياناتك، حاول تحديث الصفحة.', 'error', 5000); } catch (e) {}
         }
       } else {
         currentUser = null;
-        Store.setUid(null);
+        try { Store.setUid(null); } catch (e) {}
       }
 
       readyResolve(currentUser);
-
-      // تحديث واجهة المستخدم إن كانت الصفحة تحتوي عناصر ديناميكية
       document.dispatchEvent(new CustomEvent('auth:changed', { detail: currentUser }));
     });
   })();
 
-  /* ============================================================
-     التصدير
-     ============================================================ */
   return {
     register: register,
     login: login,
     logout: logout,
     resetPassword: resetPassword,
-    currentUser: currentUser,
+    currentUser: currentUserFn,
     requireAuth: requireAuth,
-    requireGuest: requireGuest,
     ready: readyPromise
   };
 })();
