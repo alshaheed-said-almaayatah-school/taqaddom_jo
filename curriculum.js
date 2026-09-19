@@ -1,9 +1,7 @@
 /* ============================================================
    curriculum.js
    طبقة قراءة موحّدة فوق data.js
-   لا صفحة تقرأ CURRICULUM_DATA مباشرة
-
-   يعتمد على: data.js (window.CURRICULUM_DATA)
+   ⚠️ يعتمد على window.CURRICULUM_DATA
    ============================================================ */
 
 window.Curriculum = (function () {
@@ -11,7 +9,7 @@ window.Curriculum = (function () {
   let tree = null;
 
   /* ============================================================
-     بناء الشجرة (مرة واحدة)
+     بناء الشجرة
      ============================================================ */
   function build() {
     if (tree) return tree;
@@ -53,7 +51,6 @@ window.Curriculum = (function () {
       };
     });
 
-    /* قائمة مسطّحة لكل الدروس */
     const flatLessons = [];
     const byLessonId  = new Map();
     const bySubjectId = new Map();
@@ -87,7 +84,7 @@ window.Curriculum = (function () {
   }
 
   /* ============================================================
-     الوصول للبيانات
+     الوصول
      ============================================================ */
 
   function get()         { return build(); }
@@ -104,10 +101,6 @@ window.Curriculum = (function () {
     return build().indexes.byLessonId.get(id) || null;
   }
 
-  /* ============================================================
-     التنقل بين الدروس
-     ============================================================ */
-
   function getNextLesson(lessonId) {
     const all = build().flatLessons;
     const i = all.findIndex(function (l) { return l.lesson_id === lessonId; });
@@ -123,14 +116,14 @@ window.Curriculum = (function () {
   }
 
   /* ============================================================
-     تطبيع النص العربي (للبحث)
+     تطبيع النص العربي
      ============================================================ */
 
   function normalize(s) {
     return String(s || '')
       .trim()
       .toLowerCase()
-      .replace(/[\u064B-\u065F\u0670]/g, '') // إزالة التشكيل
+      .replace(/[\u064B-\u065F\u0670]/g, '')
       .replace(/[أإآ]/g, 'ا')
       .replace(/ى/g, 'ي')
       .replace(/ة/g, 'ه');
@@ -159,10 +152,6 @@ window.Curriculum = (function () {
 
     return { subjects: subjectsHit, lessons: lessonsHit };
   }
-
-  /* ============================================================
-     التصدير
-     ============================================================ */
 
   return {
     get: get,
