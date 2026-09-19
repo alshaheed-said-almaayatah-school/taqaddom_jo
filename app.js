@@ -1,17 +1,16 @@
 /* ============================================================
    app.js
-   Bootstrap عام — يُحمَّل آخر ملف
+   Bootstrap عام — يُحمَّل آخر ملف من ملفات JS
 
-   يعتمد على: كل الملفات السابقة
+   ⚠️ يعتمد على: UI, Auth, Store
    ============================================================ */
 
 window.App = (function () {
 
   /* ============================================================
-     التهيئة
+     تهيئة الصفحة
      ============================================================ */
-
-  function init() {
+  async function init() {
 
     /* ---------- Theme ---------- */
     UI.initTheme();
@@ -25,33 +24,45 @@ window.App = (function () {
       }
     });
 
-    /* ---------- تمييز الرابط النشط في Bottom Nav ---------- */
-    const here = location.pathname.split('/').pop() || 'index.html';
-    UI.els('.bottom-nav a').forEach(function (a) {
-      const href = (a.getAttribute('href') || '').split('?')[0].split('#')[0];
-      if (href === here) a.classList.add('active');
-    });
+    /* ---------- Online Check ---------- */
+    UI.initOnline();
 
-    /* ---------- اسم المستخدم ---------- */
-    const u = Auth.currentUser();
-    UI.els('[data-user-name]').forEach(function (n) {
-      n.textContent = u ? u.name : 'زائر';
-    });
+    /* ---------- Floating Menu (FAB) ---------- */
+    UI.initFAB();
+
+    /* ---------- انتظار Firebase ---------- */
+    await Auth.ready;
+
+    const user = Auth.currentUser();
+
+    /* ---------- إخفاء شاشة التحميل ---------- */
+    UI.hideLoading();
+
+    /* ---------- اسم المستخدم في الواجهة ---------- */
+    if (user) {
+      UI.els('[data-user-name]').forEach(function (n) {
+        n.textContent = user.name || 'طالب';
+      });
+      UI.els('[data-user-email]').forEach(function (n) {
+        n.textContent = user.email || '';
+      });
+    }
 
     /* ---------- عناصر تتطلب تسجيل دخول ---------- */
     UI.els('[data-require-auth]').forEach(function (el) {
-      el.style.display = u ? '' : 'none';
+      el.classList.toggle('hidden', !user);
     });
 
     /* ---------- عناصر تتطلب عدم تسجيل دخول ---------- */
     UI.els('[data-require-guest]').forEach(function (el) {
-      el.style.display = u ? 'none' : '';
+      el.classList.toggle('hidden', !!user);
     });
 
-    /* ---------- أزرار تسجيل الخروج العامة ---------- */
+    /* ---------- أزرار تسجيل الخروج ---------- */
     UI.els('[data-logout]').forEach(function (el) {
       el.addEventListener('click', async function (e) {
         e.preventDefault();
+
         const ok = await UI.confirm({
           title: 'تسجيل الخروج',
           message: 'هل تريد إنهاء الجلسة؟',
@@ -60,21 +71,45 @@ window.App = (function () {
           danger: true
         });
         if (!ok) return;
-        Auth.logout();
+
+        await Auth.logout();
         location.replace('login.html');
       });
     });
 
-    /* ---------- سنة الفوتر ---------- */
+    /* ---------- حماية الصفحات ---------- */
+    const page = document.body.dataset.page || '';
+    const protectedPages = [
+      'dashboard', 'subjects', 'lesson',
+      'statistics', 'focus', 'tools',
+      'community', 'profile', 'exams',
+      'tasks', 'grades'
+    ];
+
+    if (protectedPages.indexOf(page) !== -1 && !user) {
+      location.replace('login.html');
+      return;
+    }
+
+    /* ---------- السنة في الفوتر ---------- */
     UI.els('#year').forEach(function (el) {
       el.textContent = new Date().getFullYear();
+    });
+
+    /* ---------- إشعار تغيير المستخدم ---------- */
+    document.addEventListener('auth:changed', function (e) {
+      if (!e.detail) {
+        // خرج المستخدم
+        if (protectedPages.indexOf(page) !== -1) {
+          location.replace('login.html');
+        }
+      }
     });
   }
 
   /* ============================================================
-     التشغيل التلقائي
+     التشغيل
      ============================================================ */
-
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
@@ -84,7 +119,6 @@ window.App = (function () {
   /* ============================================================
      التصدير
      ============================================================ */
-
   return {
     init: init
   };
