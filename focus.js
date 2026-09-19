@@ -1,15 +1,10 @@
 /* ============================================================
    focus.js
-   Pomodoro Timer + تسجيل جلسات التركيز
-
-   يعتمد على: Store (ui.js) + Progress (progress.js)
+   Pomodoro Timer + تسجيل الجلسات
+   ⚠️ يعتمد على Store + Progress + UI
    ============================================================ */
 
 window.Focus = (function () {
-
-  /* ============================================================
-     الحالات
-     ============================================================ */
 
   const PRESETS = {
     '25': { work: 25 * 60, rest: 5 * 60 },
@@ -18,23 +13,15 @@ window.Focus = (function () {
   };
 
   let preset    = '25';
-  let mode      = 'work';   // 'work' | 'rest'
+  let mode      = 'work';
   let remaining = PRESETS[preset].work;
   let total     = PRESETS[preset].work;
   let timerId   = null;
   let running   = false;
 
-  /* ============================================================
-     عناصر DOM (تُلتقط عند init)
-     ============================================================ */
-
   let elTimer, elProgress, elMode;
   let btnStart, btnPause, btnReset;
   let elToday, elTotal;
-
-  /* ============================================================
-     تنسيق الوقت
-     ============================================================ */
 
   function fmt(s) {
     const m = Math.floor(s / 60);
@@ -42,29 +29,22 @@ window.Focus = (function () {
     return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
   }
 
-  /* ============================================================
-     العرض
-     ============================================================ */
-
   function render() {
     if (!elTimer) return;
-
     elTimer.textContent = fmt(remaining);
 
     const pct = total > 0 ? ((total - remaining) / total) * 100 : 0;
-    elProgress.style.width = pct + '%';
+    if (elProgress) elProgress.style.width = pct + '%';
 
-    elMode.textContent = mode === 'work' ? 'دراسة' : 'راحة';
-    elMode.className = 'badge ' + (mode === 'work' ? 'info' : 'success');
+    if (elMode) {
+      elMode.textContent = mode === 'work' ? 'دراسة' : 'راحة';
+      elMode.className = 'badge ' + (mode === 'work' ? 'info' : 'success');
+    }
 
     document.title = running
       ? fmt(remaining) + ' — ' + (mode === 'work' ? 'دراسة' : 'راحة')
       : 'استراتيجيات التركيز | منصة تقدّم';
   }
-
-  /* ============================================================
-     إحصاء الجلسات
-     ============================================================ */
 
   function dayKey(ts) {
     const d = new Date(ts || Date.now());
@@ -77,44 +57,25 @@ window.Focus = (function () {
   function refreshStats() {
     const sessions = Store.getFocusSessions();
     const today = dayKey();
-
-    if (elToday) {
-      elToday.textContent = sessions.filter(function (s) {
-        return dayKey(s.at) === today;
-      }).length;
-    }
-    if (elTotal) {
-      elTotal.textContent = sessions.length;
-    }
+    if (elToday) elToday.textContent = sessions.filter(function (s) { return dayKey(s.at) === today; }).length;
+    if (elTotal) elTotal.textContent = sessions.length;
   }
-
-  /* ============================================================
-     تغيير الإعداد
-     ============================================================ */
 
   function setPreset(key) {
     if (!PRESETS[key]) return;
     if (running) return;
-
-    preset    = key;
-    mode      = 'work';
-    total     = PRESETS[key].work;
+    preset = key;
+    mode = 'work';
+    total = PRESETS[key].work;
     remaining = total;
-
     UI.els('.chip').forEach(function (c) {
       c.classList.toggle('active', c.dataset.preset === key);
     });
-
     render();
   }
 
-  /* ============================================================
-     العدّاد
-     ============================================================ */
-
   function tick() {
     remaining--;
-
     if (remaining <= 0) {
       clearInterval(timerId);
       timerId = null;
@@ -125,29 +86,24 @@ window.Focus = (function () {
     render();
   }
 
-  function onPhaseEnd() {
+  async function onPhaseEnd() {
     if (mode === 'work') {
       const dur = Math.round(total / 60);
-
-      Store.addFocusSession({ duration: dur, preset: preset });
-      Store.logActivity('focus', 'أكملت جلسة تركيز مدتها ' + dur + ' دقيقة', { duration: dur });
-      Progress.checkAchievements();
+      await Store.addFocusSession({ duration: dur, preset: preset });
+      await Store.logActivity('focus', 'أكملت جلسة تركيز مدتها ' + dur + ' دقيقة', { duration: dur });
+      await Progress.checkAchievements();
       refreshStats();
-
       UI.toast('✅ انتهت جلسة الدراسة! خذ راحة ' + Math.round(PRESETS[preset].rest / 60) + ' دقائق', 'success', 5000);
-
-      mode      = 'rest';
-      total     = PRESETS[preset].rest;
+      mode = 'rest';
+      total = PRESETS[preset].rest;
       remaining = total;
     } else {
       UI.toast('انتهت الراحة — جاهز لجلسة جديدة 🍅', 'info', 5000);
-
-      mode      = 'work';
-      total     = PRESETS[preset].work;
+      mode = 'work';
+      total = PRESETS[preset].work;
       remaining = total;
     }
 
-    /* صوت قصير (اختياري) */
     try {
       const Ctx = window.AudioContext || window.webkitAudioContext;
       if (Ctx) {
@@ -164,25 +120,18 @@ window.Focus = (function () {
           if (ctx.close) ctx.close();
         }, 300);
       }
-    } catch (e) { /* تجاهل */ }
+    } catch (e) {}
 
     if (btnStart) btnStart.disabled = false;
     if (btnPause) btnPause.disabled = true;
-
     render();
   }
-
-  /* ============================================================
-     أوامر التحكم
-     ============================================================ */
 
   function start() {
     if (running) return;
     running = true;
-
     if (btnStart) btnStart.disabled = true;
     if (btnPause) btnPause.disabled = false;
-
     timerId = setInterval(tick, 1000);
     render();
   }
@@ -190,13 +139,10 @@ window.Focus = (function () {
   function pause() {
     if (!running) return;
     running = false;
-
     clearInterval(timerId);
     timerId = null;
-
     if (btnStart) btnStart.disabled = false;
     if (btnPause) btnPause.disabled = true;
-
     render();
   }
 
@@ -204,24 +150,17 @@ window.Focus = (function () {
     running = false;
     clearInterval(timerId);
     timerId = null;
-
-    mode      = 'work';
-    total     = PRESETS[preset].work;
+    mode = 'work';
+    total = PRESETS[preset].work;
     remaining = total;
-
     if (btnStart) btnStart.disabled = false;
     if (btnPause) btnPause.disabled = true;
-
     render();
   }
 
-  /* ============================================================
-     التهيئة
-     ============================================================ */
-
   function init() {
-    elTimer    = document.getElementById('pomoTimer');
-    if (!elTimer) return;  // الصفحة ليست focus.html
+    elTimer = document.getElementById('pomoTimer');
+    if (!elTimer) return;
 
     elProgress = document.getElementById('pomoProgress');
     elMode     = document.getElementById('pomoMode');
@@ -248,10 +187,6 @@ window.Focus = (function () {
   } else {
     init();
   }
-
-  /* ============================================================
-     التصدير
-     ============================================================ */
 
   return {
     start: start,
