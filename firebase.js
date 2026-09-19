@@ -1,8 +1,7 @@
 /* ============================================================
    firebase.js
-   إعداد Firebase + دوال مساعدة للتعامل مع Auth + Firestore
-
-   ⚠️ يجب أن يُحمَّل أول ملف من ملفات JS
+   إعداد Firebase + دوال مساعدة
+   ⚠️ يجب أن يُحمَّل أول ملف — type="module"
    ============================================================ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -12,7 +11,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
-  updateProfile
+  updateProfile,
+  sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   getFirestore,
@@ -45,7 +45,7 @@ const auth = getAuth(app);
 const db   = getFirestore(app);
 
 /* ============================================================
-   التصدير — كل ما يحتاجه المشروع
+   التصدير
    ============================================================ */
 
 window.FB = {
@@ -59,6 +59,7 @@ window.FB = {
   signOut,
   onAuthStateChanged,
   updateProfile,
+  sendPasswordResetEmail,
 
   // Firestore
   doc,
