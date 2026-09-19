@@ -1,65 +1,103 @@
 /* ============================================================
    ui.js
    يحتوي على:
-     1) Store — طبقة التخزين الموحّدة (localStorage)
+     1) Store — طبقة تخزين على Firestore
      2) UI    — أدوات الواجهة (Theme, Toast, Modal, Helpers)
 
-   ⚠️ هذا الملف يجب أن يُحمَّل أولًا بعد data.js
+   ⚠️ يعتمد على window.FB (من firebase.js)
+   ⚠️ يُحمَّل بعد firebase.js
    ============================================================ */
 
 
 /* ============================================================
-   Store — كل تعامل مع localStorage يمر من هنا
+   Store — كل تعامل مع Firestore يمر من هنا
    ============================================================ */
 
 window.Store = (function () {
 
-  const NS = 'taqaddom';
+  let currentUid = null;
+  let cache = {};           // نسخة محلية مؤقتة للسرعة
+  let listeners = {};       // onSnapshot listeners
 
-  const KEYS = {
-    USERS:        NS + ':users',
-    SESSION:      NS + ':session',
-    PROGRESS:     NS + ':progress',
-    ACTIVITY:     NS + ':activity',
-    ACHIEVEMENTS: NS + ':achievements',
-    STREAK:       NS + ':streak',
-    GOALS:        NS + ':goals',
-    FOCUS:        NS + ':focus',
-    THEME:        NS + ':theme'
-  };
+  /* ---------- إعداد UID ---------- */
+  function setUid(uid) {
+    currentUid = uid;
+    cache = {};
+    // إيقاف المستمعين القديمين
+    Object.keys(listeners).forEach(function (k) {
+      try { listeners[k](); } catch (e) {}
+    });
+    listeners = {};
+  }
 
-  /* ---------- قراءة / كتابة / حذف ---------- */
-  function read(key, fallback) {
-    try {
-      const raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : (fallback !== undefined ? fallback : null);
-    } catch (e) {
-      console.warn('[Store.read]', key, e);
-      return fallback !== undefined ? fallback : null;
+  function getUid() { return currentUid; }
+
+  function userDocRef() {
+    if (!currentUid) throw new Error('لا يوجد مستخدم مسجّل');
+    return FB.doc(FB.db, 'users', currentUid);
+  }
+
+  function userSubRef(sub) {
+    if (!currentUid) throw new Error('لا يوجد مستخدم مسجّل');
+    return FB.doc(FB.db, 'users', currentUid, 'data', sub);
+  }
+
+  /* ============================================================
+     تحميل كل بيانات المستخدم (مرة واحدة عند الدخول)
+     ============================================================ */
+  async function loadAll() {
+    if (!currentUid) return null;
+
+    const snap = await FB.getDoc(userDocRef());
+    if (!snap.exists()) {
+      // مستند جديد — أنشئه
+      const initial = {
+        profile: {
+          name: '',
+          email: '',
+          createdAt: Date.now()
+        },
+        progress: {},
+        achievements: {},
+        streak: { days: [] },
+        goals: [],
+        focus: [],
+        activity: [],
+        tasks: [],
+        exams: [],
+        grades: {
+          subjects: {},
+          target: 90
+        },
+        notes: {}
+      };
+      await FB.setDoc(userDocRef(), initial);
+      cache = initial;
+      return initial;
     }
+
+    cache = snap.data();
+    return cache;
   }
 
-  function write(key, value) {
-    try {
-      localStorage.setItem(key, JSON.stringify(value));
-      return true;
-    } catch (e) {
-      console.warn('[Store.write]', key, e);
-      return false;
-    }
+  /* ============================================================
+     Profile
+     ============================================================ */
+  async function saveProfile(profile) {
+    if (!currentUid) return;
+    cache.profile = Object.assign({}, cache.profile, profile);
+    await FB.updateDoc(userDocRef(), { profile: cache.profile });
   }
 
-  function remove(key) {
-    localStorage.removeItem(key);
+  function getProfile() {
+    return cache.profile || {};
   }
 
-  function cryptoId() {
-    return 'id-' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
-  }
-
-  /* ---------- Progress ---------- */
+  /* ============================================================
+     Progress — { lessonId: { status, updatedAt } }
+     ============================================================ */
   function getProgress() {
-    return read(KEYS.PROGRESS, {});
+    return cache.progress || {};
   }
 
   function getLessonStatus(lessonId) {
@@ -67,28 +105,89 @@ window.Store = (function () {
     return (p[lessonId] && p[lessonId].status) || 'notstarted';
   }
 
-  function setLessonStatus(lessonId, status) {
-    const p = getProgress();
+  async function setLessonStatus(lessonId, status) {
+    if (!currentUid) return;
+    if (!cache.progress) cache.progress = {};
+
     if (status === 'notstarted') {
-      delete p[lessonId];
+      delete cache.progress[lessonId];
     } else {
-      p[lessonId] = { status: status, updatedAt: Date.now() };
+      cache.progress[lessonId] = { status: status, updatedAt: Date.now() };
     }
-    write(KEYS.PROGRESS, p);
-    return p;
+
+    await FB.updateDoc(userDocRef(), { progress: cache.progress });
   }
 
-  function resetProgress() {
-    write(KEYS.PROGRESS, {});
+  async function resetProgress() {
+    if (!currentUid) return;
+    cache.progress = {};
+    await FB.updateDoc(userDocRef(), { progress: {} });
   }
 
-  /* ---------- Activity ---------- */
+  /* ============================================================
+     Achievements — { achId: timestamp }
+     ============================================================ */
+  function getAchievements() {
+    return cache.achievements || {};
+  }
+
+  async function setAchievements(a) {
+    if (!currentUid) return;
+    cache.achievements = a;
+    await FB.updateDoc(userDocRef(), { achievements: a });
+  }
+
+  /* ============================================================
+     Streak — { days: [YYYY-MM-DD, ...] }
+     ============================================================ */
+  function getStreak() {
+    return cache.streak || { days: [] };
+  }
+
+  async function setStreak(s) {
+    if (!currentUid) return;
+    cache.streak = s;
+    await FB.updateDoc(userDocRef(), { streak: s });
+  }
+
+  /* ============================================================
+     Goals
+     ============================================================ */
+  function getGoals() {
+    return cache.goals || [];
+  }
+
+  async function setGoals(g) {
+    if (!currentUid) return;
+    cache.goals = g;
+    await FB.updateDoc(userDocRef(), { goals: g });
+  }
+
+  /* ============================================================
+     Focus Sessions
+     ============================================================ */
+  function getFocusSessions() {
+    return cache.focus || [];
+  }
+
+  async function addFocusSession(session) {
+    if (!currentUid) return;
+    const list = getFocusSessions().slice();
+    list.unshift(Object.assign({ id: cryptoId(), at: Date.now() }, session));
+    cache.focus = list.slice(0, 500);
+    await FB.updateDoc(userDocRef(), { focus: cache.focus });
+  }
+
+  /* ============================================================
+     Activity Log
+     ============================================================ */
   function getActivity() {
-    return read(KEYS.ACTIVITY, []);
+    return cache.activity || [];
   }
 
-  function logActivity(type, message, meta) {
-    const list = getActivity();
+  async function logActivity(type, message, meta) {
+    if (!currentUid) return;
+    const list = getActivity().slice();
     list.unshift({
       id: cryptoId(),
       type: type,
@@ -96,67 +195,194 @@ window.Store = (function () {
       meta: meta || {},
       at: Date.now()
     });
-    write(KEYS.ACTIVITY, list.slice(0, 200));
+    cache.activity = list.slice(0, 200);
+    await FB.updateDoc(userDocRef(), { activity: cache.activity });
   }
 
-  /* ---------- Users / Session ---------- */
-  function getUsers()   { return read(KEYS.USERS, {}); }
-  function saveUsers(u) { return write(KEYS.USERS, u); }
-  function getSession() { return read(KEYS.SESSION, null); }
-
-  function setSession(s) {
-    if (s) write(KEYS.SESSION, s);
-    else remove(KEYS.SESSION);
+  /* ============================================================
+     Tasks (قائمة المهام)
+     ============================================================ */
+  function getTasks() {
+    return cache.tasks || [];
   }
 
-  /* ---------- Theme ---------- */
-  function getTheme() { return read(KEYS.THEME, null); }
-  function setTheme(t) { return write(KEYS.THEME, t); }
-
-  /* ---------- Achievements / Goals / Focus ---------- */
-  function getAchievements() { return read(KEYS.ACHIEVEMENTS, {}); }
-  function setAchievements(a) { return write(KEYS.ACHIEVEMENTS, a); }
-
-  function getGoals() { return read(KEYS.GOALS, []); }
-  function setGoals(g) { return write(KEYS.GOALS, g); }
-
-  function getFocusSessions() { return read(KEYS.FOCUS, []); }
-
-  function addFocusSession(s) {
-    const list = getFocusSessions();
-    list.unshift(Object.assign({ id: cryptoId(), at: Date.now() }, s));
-    write(KEYS.FOCUS, list.slice(0, 500));
+  async function setTasks(t) {
+    if (!currentUid) return;
+    cache.tasks = t;
+    await FB.updateDoc(userDocRef(), { tasks: t });
   }
 
+  async function addTask(task) {
+    if (!currentUid) return;
+    const list = getTasks().slice();
+    list.unshift({
+      id: cryptoId(),
+      text: task.text || '',
+      done: false,
+      priority: task.priority || 'normal',
+      dueDate: task.dueDate || null,
+      createdAt: Date.now()
+    });
+    await setTasks(list);
+    return list[0];
+  }
+
+  async function toggleTask(id) {
+    const list = getTasks().map(function (t) {
+      if (t.id === id) {
+        return Object.assign({}, t, {
+          done: !t.done,
+          doneAt: !t.done ? Date.now() : null
+        });
+      }
+      return t;
+    });
+    await setTasks(list);
+  }
+
+  async function deleteTask(id) {
+    await setTasks(getTasks().filter(function (t) { return t.id !== id; }));
+  }
+
+  /* ============================================================
+     Exams (الامتحانات)
+     ============================================================ */
+  function getExams() {
+    return cache.exams || [];
+  }
+
+  async function setExams(e) {
+    if (!currentUid) return;
+    cache.exams = e;
+    await FB.updateDoc(userDocRef(), { exams: e });
+  }
+
+  async function addExam(exam) {
+    if (!currentUid) return;
+    const list = getExams().slice();
+    const newExam = {
+      id: cryptoId(),
+      title: exam.title || '',
+      subject: exam.subject || '',
+      date: exam.date,          // ISO string
+      notes: exam.notes || '',
+      createdAt: Date.now()
+    };
+    list.push(newExam);
+    list.sort(function (a, b) { return new Date(a.date) - new Date(b.date); });
+    await setExams(list);
+    return newExam;
+  }
+
+  async function deleteExam(id) {
+    await setExams(getExams().filter(function (e) { return e.id !== id; }));
+  }
+
+  /* ============================================================
+     Grades (المعدل والهدف)
+     ============================================================ */
+  function getGrades() {
+    return cache.grades || { subjects: {}, target: 90 };
+  }
+
+  async function setGrades(g) {
+    if (!currentUid) return;
+    cache.grades = g;
+    await FB.updateDoc(userDocRef(), { grades: g });
+  }
+
+  /* ============================================================
+     Notes (ملاحظات الدروس)
+     ============================================================ */
+  function getNotes() {
+    return cache.notes || {};
+  }
+
+  function getLessonNote(lessonId) {
+    return getNotes()[lessonId] || '';
+  }
+
+  async function setLessonNote(lessonId, text) {
+    if (!currentUid) return;
+    if (!cache.notes) cache.notes = {};
+    if (text.trim() === '') {
+      delete cache.notes[lessonId];
+    } else {
+      cache.notes[lessonId] = {
+        text: text,
+        updatedAt: Date.now()
+      };
+    }
+    await FB.updateDoc(userDocRef(), { notes: cache.notes });
+  }
+
+  /* ============================================================
+     Helpers
+     ============================================================ */
+  function cryptoId() {
+    return 'id-' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
+  }
+
+  /* ============================================================
+     التصدير
+     ============================================================ */
   return {
-    KEYS: KEYS,
-    read: read,
-    write: write,
-    remove: remove,
+    setUid: setUid,
+    getUid: getUid,
+    loadAll: loadAll,
     cryptoId: cryptoId,
 
+    // Profile
+    getProfile: getProfile,
+    saveProfile: saveProfile,
+
+    // Progress
     getProgress: getProgress,
     getLessonStatus: getLessonStatus,
     setLessonStatus: setLessonStatus,
     resetProgress: resetProgress,
 
+    // Achievements
+    getAchievements: getAchievements,
+    setAchievements: setAchievements,
+
+    // Streak
+    getStreak: getStreak,
+    setStreak: setStreak,
+
+    // Goals
+    getGoals: getGoals,
+    setGoals: setGoals,
+
+    // Focus
+    getFocusSessions: getFocusSessions,
+    addFocusSession: addFocusSession,
+
+    // Activity
     getActivity: getActivity,
     logActivity: logActivity,
 
-    getUsers: getUsers,
-    saveUsers: saveUsers,
-    getSession: getSession,
-    setSession: setSession,
+    // Tasks
+    getTasks: getTasks,
+    setTasks: setTasks,
+    addTask: addTask,
+    toggleTask: toggleTask,
+    deleteTask: deleteTask,
 
-    getTheme: getTheme,
-    setTheme: setTheme,
+    // Exams
+    getExams: getExams,
+    setExams: setExams,
+    addExam: addExam,
+    deleteExam: deleteExam,
 
-    getAchievements: getAchievements,
-    setAchievements: setAchievements,
-    getGoals: getGoals,
-    setGoals: setGoals,
-    getFocusSessions: getFocusSessions,
-    addFocusSession: addFocusSession
+    // Grades
+    getGrades: getGrades,
+    setGrades: setGrades,
+
+    // Notes
+    getNotes: getNotes,
+    getLessonNote: getLessonNote,
+    setLessonNote: setLessonNote
   };
 })();
 
@@ -202,9 +428,7 @@ window.UI = (function () {
   /* ---------- Theme ---------- */
   function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
-    Store.setTheme(theme);
-
-    // تحديث أيقونة الأزرار
+    try { localStorage.setItem('taqaddom:theme', theme); } catch (e) {}
     els('[data-theme-toggle]').forEach(function (btn) {
       btn.textContent = theme === 'dark' ? '☀️' : '🌙';
     });
@@ -219,12 +443,12 @@ window.UI = (function () {
   }
 
   function initTheme() {
-    const saved = Store.getTheme();
+    let saved = null;
+    try { saved = localStorage.getItem('taqaddom:theme'); } catch (e) {}
     let initial = saved;
     if (!initial) {
-      initial = window.matchMedia &&
-                window.matchMedia('(prefers-color-scheme: light)').matches
-                ? 'light' : 'dark';
+      initial = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches
+        ? 'light' : 'dark';
     }
     applyTheme(initial);
   }
@@ -282,9 +506,7 @@ window.UI = (function () {
         resolve(val);
       }
 
-      function onKey(e) {
-        if (e.key === 'Escape') close(false);
-      }
+      function onKey(e) { if (e.key === 'Escape') close(false); }
 
       back.addEventListener('click', function (e) {
         if (e.target === back) return close(false);
@@ -298,6 +520,64 @@ window.UI = (function () {
     });
   }
 
+  /* ---------- Floating Menu (FAB) ---------- */
+  function initFAB() {
+    const fab      = document.getElementById('fabBtn');
+    const menu     = document.getElementById('floatingMenu');
+    const backdrop = document.getElementById('menuBackdrop');
+    if (!fab || !menu) return;
+
+    function toggle(force) {
+      const open = typeof force === 'boolean' ? force : !menu.classList.contains('show');
+      menu.classList.toggle('show', open);
+      if (backdrop) backdrop.classList.toggle('show', open);
+      fab.classList.toggle('open', open);
+      fab.textContent = open ? '✕' : '☰';
+    }
+
+    fab.addEventListener('click', function () { toggle(); });
+    if (backdrop) backdrop.addEventListener('click', function () { toggle(false); });
+
+    menu.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () { toggle(false); });
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') toggle(false);
+    });
+
+    // تمييز الرابط النشط
+    const here = location.pathname.split('/').pop() || 'dashboard.html';
+    menu.querySelectorAll('a').forEach(function (a) {
+      const href = (a.getAttribute('href') || '').split('?')[0].split('#')[0];
+      if (href === here) a.classList.add('active');
+    });
+  }
+
+  /* ---------- Online Check ---------- */
+  function checkOnline() {
+    const offline = document.getElementById('offline');
+    if (!offline) return;
+    if (!navigator.onLine) {
+      offline.classList.remove('hidden');
+    } else {
+      offline.classList.add('hidden');
+    }
+  }
+
+  function initOnline() {
+    window.addEventListener('online', checkOnline);
+    window.addEventListener('offline', checkOnline);
+    checkOnline();
+  }
+
+  /* ---------- Hide Loading ---------- */
+  function hideLoading() {
+    const loading = document.getElementById('loading');
+    if (loading) loading.classList.add('hidden');
+  }
+
+  /* ---------- التصدير ---------- */
   return {
     el: el,
     els: els,
@@ -312,6 +592,12 @@ window.UI = (function () {
     initTheme: initTheme,
 
     toast: toast,
-    confirm: confirmDialog
+    confirm: confirmDialog,
+
+    initFAB: initFAB,
+
+    checkOnline: checkOnline,
+    initOnline: initOnline,
+    hideLoading: hideLoading
   };
 })();
