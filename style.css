@@ -1,12 +1,10 @@
-/* استيراد خط عربي احترافي (اختياري — احذف السطر لو ما بدك خطوط خارجية) */
-@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap");
-
 /* ============================================================
    منصة تقدّم | مجتمع جيل 2011
-   ملف التنسيقات الوحيد — النسخة الاحترافية (Pro Edition)
+   ملف التنسيقات الاحترافي (Pro Edition)
    Mobile-first | RTL | Dark + Light
-   خلفية متحركة (نجوم + أسهم صاعدة) بـ CSS فقط — بدون أي تعديل على HTML
    ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap");
 
 /* ============================================================
    1) Theme Tokens
@@ -41,7 +39,6 @@
   --radius-s:  12px;
   --radius-l:  22px;
 
-  /* ألوان الخلفية المتحركة */
   --star:      rgba(255,255,255,0.95);
   --star-2:    rgba(155,195,255,0.9);
   --star-dim:  rgba(180,205,255,0.35);
@@ -92,27 +89,23 @@
   --grad-brand: linear-gradient(135deg, #2563eb 0%, #7c3aed 55%, #0891b2 100%);
 }
 
-/* قيم مشتركة بين الثيمين + مفاتيح ضبط الحركة (عدّلها بسهولة) */
 :root {
   --ease:   cubic-bezier(.22, 1, .36, 1);
   --spring: cubic-bezier(.34, 1.56, .64, 1);
 
-  --arrow-speed-a: 48s;   /* سرعة الأسهم البطيئة (أكبر = أبطأ) */
-  --arrow-speed-b: 30s;   /* سرعة الأسهم السريعة */
-  --stars-speed:   140s;  /* سرعة صعود النجوم */
-  --angle: 0deg;          /* احتياط لو المتصفح ما بيدعم @property */
+  --arrow-speed-a: 48s;
+  --arrow-speed-b: 30s;
+  --stars-speed:   140s;
+  --angle: 0deg;
 
-  /* أسهم صغيرة (SVG) تُستخدم كـ Mask — الطبقة البطيئة */
   --arr-s1: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cpath d='M64 228L70 220L76 228M70 220V238' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --arr-s2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cpath d='M243 129L250 120L257 129M250 120V142' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --arr-s3: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cpath d='M113 439L120 430L127 439M120 430V450M463 99L470 90L477 99M470 90V110' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  /* الطبقة السريعة (أكبر شوي) */
   --arr-f1: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cpath d='M161 71L170 60L179 71M170 60V88' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --arr-f2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cpath d='M51 311L60 300L69 311M60 300V328' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --arr-f3: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cpath d='M321 531L330 520L339 531M330 520V548M81 151L90 140L99 151M90 140V168' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
-/* زاوية قابلة للتحريك (لإطارات التدرّج الدوّارة) */
 @property --angle {
   syntax: "<angle>";
   initial-value: 0deg;
@@ -164,7 +157,6 @@ img { max-width: 100%; display: block; }
 button { font: inherit; color: inherit; cursor: pointer; border: none; background: none; touch-action: manipulation; }
 input, textarea, select { font: inherit; }
 
-/* تركيز واضح للوحة المفاتيح */
 :focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 3px;
@@ -172,11 +164,9 @@ input, textarea, select { font: inherit; }
 }
 
 /* ============================================================
-   3) Background Engine — خلفية متحركة (نجوم + أسهم صاعدة)
-   أربع طبقات ثابتة خلف كل المحتوى، كلها بـ transform (سلسة وخفيفة)
+   3) Background Engine
    ============================================================ */
 
-/* الطبقة 1: شفق (Aurora) متحرك + نجوم بعيدة ثابتة خافتة */
 body::before {
   content: "";
   position: fixed;
@@ -195,7 +185,6 @@ body::before {
   will-change: transform;
 }
 
-/* الطبقة 2: نجوم تلمع وتصعد ببطء */
 body::after {
   content: "";
   position: fixed;
@@ -218,7 +207,6 @@ body::after {
   will-change: transform, opacity;
 }
 
-/* الطبقة 3: أسهم صغيرة طالعة لفوق — بطيئة (خلف) */
 html::before {
   content: "";
   position: fixed;
@@ -241,7 +229,6 @@ html::before {
   will-change: transform;
 }
 
-/* الطبقة 4: أسهم أسرع بلون مختلف (أمام) */
 html::after {
   content: "";
   position: fixed;
@@ -275,7 +262,6 @@ h3 { font-size: 1.1rem; }
 h4 { font-size: 1rem; }
 p  { margin: 0 0 1em; color: var(--text-2); }
 
-/* عناوين بتدرّج لوني متحرك */
 .hero h1,
 .about-hero h1,
 .community-hero h1 {
@@ -350,7 +336,6 @@ p  { margin: 0 0 1em; color: var(--text-2); }
   animation: logo-glow 4s ease-in-out infinite;
 }
 
-/* اقتصاص الجزء العلوي (السهم) */
 .brand-logo img {
   width: 100%;
   height: 100%;
@@ -361,7 +346,6 @@ p  { margin: 0 0 1em; color: var(--text-2); }
   transform-origin: center 18%;
 }
 
-/* لوجو صفحة "عن المنصة" — كامل */
 .about-hero .brand-logo {
   width: 100px;
   height: 100px;
@@ -392,7 +376,6 @@ p  { margin: 0 0 1em; color: var(--text-2); }
   -webkit-backdrop-filter: blur(16px) saturate(1.5);
   border-bottom: 1px solid var(--border);
 }
-/* خط ضوئي متحرك أسفل الهيدر */
 .header::after {
   content: "";
   position: absolute;
@@ -461,7 +444,6 @@ p  { margin: 0 0 1em; color: var(--text-2); }
 .btn:hover { background: var(--card-2); color: var(--text); border-color: var(--border-2); }
 .btn:active { transform: translateY(1px) scale(.97); }
 
-/* لمعة تمرّ فوق الأزرار الملوّنة */
 .btn.primary::after,
 .btn.success::after,
 .btn.danger::after {
@@ -538,7 +520,6 @@ p  { margin: 0 0 1em; color: var(--text-2); }
 .card-title { font-size: 1rem; font-weight: 700; margin: 0 0 4px; }
 .card-sub { font-size: .85rem; color: var(--text-2); margin: 0; }
 
-/* إطار متدرّج يظهر عند التمرير (تقنية Mask) */
 .card::before,
 .feature::before,
 .mini-card::before,
@@ -566,7 +547,6 @@ p  { margin: 0 0 1em; color: var(--text-2); }
   transition: opacity .35s ease;
 }
 
-/* البطاقات المميّزة: إطار دوّار مضيء دائم */
 :is(.hero-card, .level-card, .tool-hero, .community-hero, .cta-card, .pomo-card) {
   position: relative;
   box-shadow: var(--shadow-glow), inset 0 1px 0 rgba(255,255,255,.05);
@@ -587,7 +567,6 @@ p  { margin: 0 0 1em; color: var(--text-2); }
   animation: spin-angle 7s linear infinite;
 }
 
-/* تفاعل البطاقات القابلة للنقر */
 @media (hover: hover) {
   a.card:hover,
   .card.hover:hover,
@@ -804,65 +783,236 @@ a.card:active,
 .footer p { margin: 0 0 4px; color: var(--text-3); }
 
 /* ============================================================
-   17) Bottom Nav (عائم)
+   17) Floating Action Button (FAB)
    ============================================================ */
 
-.bottom-nav {
+.fab {
   position: fixed;
-  left: 10px; right: 10px;
-  bottom: calc(10px + env(safe-area-inset-bottom));
-  background: color-mix(in srgb, var(--bg-2) 82%, transparent);
-  backdrop-filter: blur(18px) saturate(1.6);
-  -webkit-backdrop-filter: blur(18px) saturate(1.6);
-  border: 1px solid var(--border-2);
-  border-radius: 22px;
-  box-shadow: var(--shadow), 0 0 40px -18px var(--primary-glow);
-  display: flex; justify-content: space-around;
-  padding: 6px;
-  z-index: 50;
+  bottom: calc(22px + env(safe-area-inset-bottom));
+  left: 22px;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2), var(--accent));
+  background-size: 200% 200%;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 12px 32px -8px var(--primary-glow), 0 0 0 1px rgba(255,255,255,.06) inset;
+  z-index: 100;
+  transition: transform .35s var(--spring), box-shadow .25s ease, background-position .6s ease;
+  animation: btn-pulse 3s ease-in-out infinite;
 }
-.bottom-nav a {
-  position: relative;
-  flex: 1;
-  display: flex; flex-direction: column;
-  align-items: center; gap: 2px;
-  padding: 6px 1px;
-  color: var(--text-3);
-  font-size: .62rem; font-weight: 700;
-  border-radius: 16px;
-  transition: color .2s ease, background .25s ease, transform .3s var(--spring);
-  text-decoration: none;
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+.fab:hover {
+  transform: scale(1.08);
+  background-position: 100% 100%;
+  box-shadow: 0 16px 40px -8px var(--primary-glow), 0 0 0 1px rgba(255,255,255,.1) inset;
 }
-.bottom-nav a .nav-ico { font-size: 1.15rem; line-height: 1; transition: transform .35s var(--spring); }
-.bottom-nav a:hover { color: var(--text-2); }
-.bottom-nav a:hover .nav-ico { transform: translateY(-3px) scale(1.15); }
-.bottom-nav a:active { transform: scale(.92); }
-.bottom-nav a.active {
-  color: var(--primary);
-  background: linear-gradient(180deg, var(--primary-t), transparent);
+.fab:active { transform: scale(.94); }
+.fab.open {
+  transform: rotate(135deg) scale(.96);
+  background: linear-gradient(135deg, var(--danger), #dc2626);
+  animation: none;
+  box-shadow: 0 12px 32px -8px rgba(239,68,68,.55);
 }
-.bottom-nav a.active::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 30%; right: 30%;
-  height: 2.5px;
-  border-radius: 0 0 6px 6px;
-  background: var(--grad-brand);
-  box-shadow: 0 0 10px var(--primary-glow);
-}
-.bottom-nav a.active .nav-ico { animation: nav-pop .55s var(--spring); }
 
-@media (min-width: 768px) {
-  .bottom-nav { display: none; }
-  .footer { padding-bottom: 30px; }
+/* Menu Backdrop */
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(3,6,14,.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+  z-index: 98;
+}
+.menu-backdrop.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Floating Menu */
+.floating-menu {
+  position: fixed;
+  bottom: calc(94px + env(safe-area-inset-bottom));
+  left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  z-index: 99;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px);
+  transition: opacity .3s var(--ease), transform .35s var(--spring);
+  max-height: calc(100vh - 130px);
+  overflow-y: auto;
+  padding: 6px 4px 6px 0;
+}
+.floating-menu.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.floating-menu a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 18px;
+  background: var(--card-glass);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  font-size: .9rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px -12px rgba(0,0,0,.5);
+  transition: background .2s ease, transform .3s var(--spring), border-color .2s ease, box-shadow .25s ease;
+  animation: rise-in .35s var(--ease) backwards;
+}
+.floating-menu a:nth-child(1) { animation-delay: .04s; }
+.floating-menu a:nth-child(2) { animation-delay: .08s; }
+.floating-menu a:nth-child(3) { animation-delay: .12s; }
+.floating-menu a:nth-child(4) { animation-delay: .16s; }
+.floating-menu a:nth-child(5) { animation-delay: .20s; }
+.floating-menu a:nth-child(6) { animation-delay: .24s; }
+.floating-menu a:nth-child(7) { animation-delay: .28s; }
+.floating-menu a:nth-child(8) { animation-delay: .32s; }
+.floating-menu a:nth-child(9) { animation-delay: .36s; }
+.floating-menu a:nth-child(10) { animation-delay: .40s; }
+
+.floating-menu a:hover {
+  background: var(--card-2);
+  color: var(--text);
+  transform: translateX(6px);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-t), 0 10px 26px -10px var(--primary-glow);
+}
+.floating-menu a:active { transform: translateX(6px) scale(.97); }
+.floating-menu a .nav-ico {
+  font-size: 1.2rem;
+  line-height: 1;
+  width: 24px;
+  text-align: center;
+  transition: transform .3s var(--spring);
+}
+.floating-menu a:hover .nav-ico { transform: scale(1.2); }
+.floating-menu a.active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 10px 26px -8px var(--primary-glow);
+}
+.floating-menu a.active .nav-ico { filter: drop-shadow(0 0 6px rgba(255,255,255,.5)); }
+
+/* إخفاء Bottom Nav القديم */
+.bottom-nav { display: none !important; }
+
+/* ============================================================
+   18) Loading Screen
+   ============================================================ */
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  z-index: 9999;
+  transition: opacity .35s ease;
+}
+.loading-screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.loading-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #0a1428;
+  box-shadow: 0 12px 40px -8px var(--primary-glow);
+  animation: logo-glow 2s ease-in-out infinite, float-y 2.4s ease-in-out infinite;
+}
+.loading-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 15%;
+  transform: scale(2.4);
+  transform-origin: center 18%;
+}
+.loading-spinner {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-right-color: var(--accent);
+  animation: spin 0.9s linear infinite;
+  box-shadow: 0 0 24px -6px var(--primary-glow);
+}
+.loading-text {
+  color: var(--text-2);
+  font-size: .92rem;
+  font-weight: 600;
+  margin: 0;
+  animation: pulse-text 1.6s ease-in-out infinite;
 }
 
 /* ============================================================
-   18) Landing Page
+   19) Offline Screen
+   ============================================================ */
+
+.offline-screen {
+  position: fixed;
+  inset: 0;
+  background: rgba(3,6,14,.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  z-index: 9998;
+  animation: rise-in .35s var(--ease);
+}
+.offline-card {
+  background: var(--card);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-l);
+  padding: 32px 24px;
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  box-shadow: var(--shadow), 0 0 60px -20px rgba(239,68,68,.5);
+}
+.offline-ico {
+  font-size: 3.6rem;
+  display: block;
+  margin-bottom: 12px;
+  line-height: 1;
+  animation: float-y 3s ease-in-out infinite;
+  filter: drop-shadow(0 8px 20px rgba(239,68,68,.4));
+}
+.offline-card h2 { font-size: 1.2rem; margin-bottom: 8px; }
+.offline-card p { color: var(--text-2); font-size: .92rem; margin-bottom: 18px; }
+
+/* ============================================================
+   20) Landing Page
    ============================================================ */
 
 .hero {
@@ -873,7 +1023,6 @@ a.card:active,
   padding: 40px 16px 30px;
   text-align: center;
 }
-/* هالة ضوء تتنفّس خلف الهيرو */
 .hero::before {
   content: "";
   position: absolute;
@@ -983,7 +1132,7 @@ a.card:active,
 }
 
 /* ============================================================
-   19) Auth (login.html)
+   21) Auth Page
    ============================================================ */
 
 .auth-wrap {
@@ -1042,7 +1191,7 @@ a.card:active,
 }
 
 /* ============================================================
-   20) Dashboard
+   22) Dashboard
    ============================================================ */
 
 .hero-card { padding: 24px; }
@@ -1146,8 +1295,35 @@ a.card:active,
   flex-shrink: 0;
 }
 
+/* Motivation Card (جديد) */
+.motivation-card {
+  padding: 20px;
+  background: linear-gradient(135deg, var(--primary-t), transparent), var(--card-glass);
+  border-color: var(--primary-t);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.motivation-ico {
+  font-size: 2.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(0 6px 16px var(--primary-glow));
+  animation: float-y 3.2s ease-in-out infinite;
+}
+.motivation-card h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 800;
+}
+.motivation-card p {
+  margin: 0;
+  font-size: .9rem;
+  color: var(--text-2);
+}
+
 /* ============================================================
-   21) Achievements Grid
+   23) Achievements Grid
    ============================================================ */
 
 .ach-grid {
@@ -1184,7 +1360,7 @@ a.card:active,
 }
 
 /* ============================================================
-   22) Subjects Page
+   24) Subjects Page
    ============================================================ */
 
 .search-results {
@@ -1307,9 +1483,14 @@ a.card:active,
   color: var(--text-2);
   text-decoration: line-through;
 }
+.lesson-mini.has-note .lm-name::after {
+  content: "📝";
+  margin-inline-start: 6px;
+  font-size: .8rem;
+}
 
 /* ============================================================
-   23) Lesson Page
+   25) Lesson Page
    ============================================================ */
 
 .breadcrumb {
@@ -1367,8 +1548,54 @@ a.card:active,
   cursor: not-allowed;
 }
 
+/* Notes Section (جديد) */
+.notes-card {
+  padding: 20px;
+}
+.notes-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 1.05rem;
+}
+.notes-textarea {
+  width: 100%;
+  min-height: 140px;
+  padding: 14px;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  color: var(--text);
+  font-family: inherit;
+  font-size: .95rem;
+  line-height: 1.7;
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s ease, box-shadow .25s ease, background .2s ease;
+}
+.notes-textarea::placeholder { color: var(--text-3); }
+.notes-textarea:hover { border-color: var(--border-2); }
+.notes-textarea:focus {
+  border-color: var(--primary);
+  background: var(--card);
+  box-shadow: 0 0 0 4px var(--primary-t), 0 8px 24px -12px var(--primary-glow);
+}
+.notes-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: .82rem;
+  color: var(--text-3);
+  min-height: 1.4em;
+}
+.notes-status.saving { color: var(--primary); }
+.notes-status.saved { color: var(--success); }
+.notes-status.error { color: var(--danger); }
+
 /* ============================================================
-   24) Tools Page
+   26) Tools Page
    ============================================================ */
 
 .tool-hero {
@@ -1428,7 +1655,7 @@ a.card:active,
 }
 
 /* ============================================================
-   25) Focus Page (Pomodoro)
+   27) Focus Page (Pomodoro)
    ============================================================ */
 
 .pomo-card { padding: 24px; }
@@ -1519,7 +1746,7 @@ a.card:active,
 }
 
 /* ============================================================
-   26) Community Page
+   28) Community Page
    ============================================================ */
 
 .community-hero {
@@ -1581,7 +1808,7 @@ a.card:active,
 }
 
 /* ============================================================
-   27) Profile Page
+   29) Profile Page
    ============================================================ */
 
 .profile-hero {
@@ -1602,7 +1829,6 @@ a.card:active,
   transition: transform .4s var(--spring);
 }
 .avatar:hover { transform: scale(1.08) rotate(-6deg); }
-/* حلقة دوّارة حول الصورة الرمزية */
 .avatar::before {
   inset: -6px;
   padding: 2.5px;
@@ -1637,7 +1863,7 @@ a.card:active,
 }
 
 /* ============================================================
-   28) About Page
+   30) About Page
    ============================================================ */
 
 .about-hero {
@@ -1651,7 +1877,7 @@ a.card:active,
 }
 
 /* ============================================================
-   29) Statistics Page
+   31) Statistics Page
    ============================================================ */
 
 .level-card {
@@ -1795,7 +2021,439 @@ a.card:active,
 }
 
 /* ============================================================
-   30) Entrance Animations — ظهور متدرّج للعناصر
+   32) Tasks Page (قائمة المهام) — جديد
+   ============================================================ */
+
+.task-add-card {
+  padding: 18px;
+}
+.task-input-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.task-input-row input {
+  flex: 1;
+  min-width: 180px;
+}
+.task-input-row select {
+  padding: 12px 14px;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  color: var(--text);
+  outline: none;
+  cursor: pointer;
+}
+.task-input-row select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-t);
+}
+
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  background: var(--card-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  transition: transform .25s var(--ease), border-color .2s ease, background .2s ease, opacity .3s ease;
+  animation: rise-in .35s var(--ease) backwards;
+}
+.task-item:hover {
+  transform: translateX(-4px);
+  border-color: var(--border-2);
+  background: var(--card-2);
+}
+.task-item.done {
+  opacity: .55;
+}
+.task-item.done .task-text {
+  text-decoration: line-through;
+  color: var(--text-3);
+}
+
+.task-check {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  border: 2px solid var(--border-2);
+  background: var(--card-2);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .2s ease, border-color .2s ease, transform .25s var(--spring);
+  font-size: .85rem;
+  color: transparent;
+}
+.task-check:hover {
+  border-color: var(--primary);
+  transform: scale(1.1);
+}
+.task-item.done .task-check {
+  background: linear-gradient(135deg, var(--success), #16a34a);
+  border-color: transparent;
+  color: #fff;
+}
+
+.task-body {
+  flex: 1;
+  min-width: 0;
+}
+.task-text {
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 4px;
+  word-break: break-word;
+}
+.task-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: .76rem;
+  color: var(--text-3);
+}
+
+.task-priority {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: .7rem;
+  font-weight: 700;
+}
+.task-priority.low    { background: rgba(34,197,94,.15);  color: var(--success); }
+.task-priority.normal { background: var(--primary-t);      color: var(--primary); }
+.task-priority.high   { background: rgba(239,68,68,.15);  color: var(--danger); }
+
+.task-delete {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-3);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .2s ease, color .2s ease, border-color .2s ease;
+}
+.task-delete:hover {
+  background: rgba(239,68,68,.15);
+  color: var(--danger);
+  border-color: rgba(239,68,68,.35);
+}
+
+.tasks-filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.tasks-filters button {
+  padding: 7px 14px;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-2);
+  font-size: .82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease, border-color .2s ease;
+}
+.tasks-filters button:hover { color: var(--text); border-color: var(--border-2); }
+.tasks-filters button.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-3);
+}
+.empty-state .empty-ico {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 12px;
+  line-height: 1;
+  opacity: .6;
+}
+.empty-state p { margin: 0; font-size: .92rem; }
+
+/* ============================================================
+   33) Exams Page (الامتحانات) — جديد
+   ============================================================ */
+
+.exam-add-card {
+  padding: 18px;
+}
+
+.exams-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.exam-item {
+  padding: 18px;
+  background: var(--card-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+  transition: transform .3s var(--ease), border-color .2s ease, box-shadow .3s ease;
+  animation: rise-in .4s var(--ease) backwards;
+}
+.exam-item::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0; bottom: 0;
+  width: 4px;
+  background: var(--primary);
+}
+.exam-item.soon::before { background: var(--warning); }
+.exam-item.urgent::before { background: var(--danger); }
+.exam-item.past::before { background: var(--text-3); }
+.exam-item:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-2);
+  box-shadow: var(--shadow-glow);
+}
+
+.exam-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.exam-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 4px;
+  word-break: break-word;
+}
+.exam-subject {
+  font-size: .82rem;
+  color: var(--primary);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.exam-countdown {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+.countdown-cell {
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 6px;
+  text-align: center;
+  transition: background .2s ease, border-color .2s ease;
+}
+.exam-item.urgent .countdown-cell {
+  border-color: rgba(239,68,68,.3);
+  background: rgba(239,68,68,.06);
+}
+.exam-item.soon .countdown-cell {
+  border-color: rgba(245,158,11,.3);
+  background: rgba(245,158,11,.06);
+}
+.countdown-num {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--text);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.countdown-lbl {
+  display: block;
+  font-size: .68rem;
+  color: var(--text-3);
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.exam-date {
+  font-size: .82rem;
+  color: var(--text-3);
+  margin-top: 10px;
+}
+.exam-notes {
+  font-size: .85rem;
+  color: var(--text-2);
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+  line-height: 1.6;
+}
+
+.exam-delete {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-3);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .2s ease, color .2s ease, border-color .2s ease;
+}
+.exam-delete:hover {
+  background: rgba(239,68,68,.15);
+  color: var(--danger);
+  border-color: rgba(239,68,68,.35);
+}
+
+/* ============================================================
+   34) Grades Page (المعدل والهدف) — جديد
+   ============================================================ */
+
+.grades-hero {
+  padding: 28px 22px;
+  text-align: center;
+  background: linear-gradient(135deg, var(--primary-t), transparent), var(--card-glass);
+  border-color: var(--primary-t);
+}
+.grades-hero .grade-big {
+  font-size: 3.6rem;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--primary), var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 8px 24px var(--primary-glow));
+  font-variant-numeric: tabular-nums;
+}
+.grades-hero .grade-lbl {
+  display: block;
+  font-size: .95rem;
+  color: var(--text-2);
+  margin-top: 8px;
+  font-weight: 600;
+}
+.grades-hero .grade-target {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: var(--primary-t);
+  color: var(--primary);
+  border-radius: 999px;
+  font-size: .85rem;
+  font-weight: 700;
+}
+
+.grade-subject-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: var(--card-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  margin-bottom: 8px;
+  transition: border-color .2s ease, background .2s ease;
+}
+.grade-subject-row:hover { border-color: var(--border-2); background: var(--card-2); }
+.grade-subject-name {
+  flex: 1;
+  font-size: .92rem;
+  font-weight: 600;
+  color: var(--text);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.grade-subject-input {
+  width: 80px;
+  padding: 8px 10px;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.grade-subject-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-t);
+}
+
+.grade-target-input {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  color: var(--text);
+  font-weight: 700;
+  outline: none;
+  text-align: center;
+  font-size: 1rem;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.grade-target-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-t);
+}
+
+.grade-progress-bar {
+  height: 18px;
+  border-radius: 999px;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+  margin: 16px 0 8px;
+}
+.grade-progress-bar > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--success), var(--primary), var(--accent));
+  background-size: 200% 100%;
+  border-radius: 999px;
+  transition: width .6s var(--ease);
+  box-shadow: 0 0 16px var(--primary-glow);
+  animation: gradient-slide 3s ease-in-out infinite alternate;
+}
+.grade-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: .8rem;
+  color: var(--text-3);
+  margin-top: 4px;
+}
+
+/* ============================================================
+   35) Entrance Animations
    ============================================================ */
 
 .card,
@@ -1806,40 +2464,41 @@ a.card:active,
 .lesson-mini,
 .rules-list li,
 .auth-card,
-.week-day {
+.week-day,
+.exam-item,
+.task-item {
   animation: rise-in .6s var(--ease) backwards;
 }
 
 :is(.grid, .subject-list, .goals-list, .activity-list, .tools-grid, .tips-list, .strat-list,
     .ach-grid, .feature-grid, .recs-list, .bars-list, .subject-detail-list, .lessons-mini,
-    .rules-list, .week-grid) > :nth-child(1) { animation-delay: .04s; }
+    .rules-list, .week-grid, .exams-list, .tasks-list) > :nth-child(1) { animation-delay: .04s; }
 :is(.grid, .subject-list, .goals-list, .activity-list, .tools-grid, .tips-list, .strat-list,
     .ach-grid, .feature-grid, .recs-list, .bars-list, .subject-detail-list, .lessons-mini,
-    .rules-list, .week-grid) > :nth-child(2) { animation-delay: .10s; }
+    .rules-list, .week-grid, .exams-list, .tasks-list) > :nth-child(2) { animation-delay: .10s; }
 :is(.grid, .subject-list, .goals-list, .activity-list, .tools-grid, .tips-list, .strat-list,
     .ach-grid, .feature-grid, .recs-list, .bars-list, .subject-detail-list, .lessons-mini,
-    .rules-list, .week-grid) > :nth-child(3) { animation-delay: .16s; }
+    .rules-list, .week-grid, .exams-list, .tasks-list) > :nth-child(3) { animation-delay: .16s; }
 :is(.grid, .subject-list, .goals-list, .activity-list, .tools-grid, .tips-list, .strat-list,
     .ach-grid, .feature-grid, .recs-list, .bars-list, .subject-detail-list, .lessons-mini,
-    .rules-list, .week-grid) > :nth-child(4) { animation-delay: .22s; }
+    .rules-list, .week-grid, .exams-list, .tasks-list) > :nth-child(4) { animation-delay: .22s; }
 :is(.grid, .subject-list, .goals-list, .activity-list, .tools-grid, .tips-list, .strat-list,
     .ach-grid, .feature-grid, .recs-list, .bars-list, .subject-detail-list, .lessons-mini,
-    .rules-list, .week-grid) > :nth-child(5) { animation-delay: .28s; }
+    .rules-list, .week-grid, .exams-list, .tasks-list) > :nth-child(5) { animation-delay: .28s; }
 :is(.grid, .subject-list, .goals-list, .activity-list, .tools-grid, .tips-list, .strat-list,
     .ach-grid, .feature-grid, .recs-list, .bars-list, .subject-detail-list, .lessons-mini,
-    .rules-list, .week-grid) > :nth-child(6) { animation-delay: .34s; }
+    .rules-list, .week-grid, .exams-list, .tasks-list) > :nth-child(6) { animation-delay: .34s; }
 :is(.grid, .subject-list, .goals-list, .activity-list, .tools-grid, .tips-list, .strat-list,
     .ach-grid, .feature-grid, .recs-list, .bars-list, .subject-detail-list, .lessons-mini,
-    .rules-list, .week-grid) > :nth-child(7) { animation-delay: .40s; }
+    .rules-list, .week-grid, .exams-list, .tasks-list) > :nth-child(7) { animation-delay: .40s; }
 :is(.grid, .subject-list, .goals-list, .activity-list, .tools-grid, .tips-list, .strat-list,
     .ach-grid, .feature-grid, .recs-list, .bars-list, .subject-detail-list, .lessons-mini,
-    .rules-list, .week-grid) > :nth-child(n+8) { animation-delay: .46s; }
+    .rules-list, .week-grid, .exams-list, .tasks-list) > :nth-child(n+8) { animation-delay: .46s; }
 
 /* ============================================================
-   31) Keyframes
+   36) Keyframes
    ============================================================ */
 
-/* الخلفية */
 @keyframes aurora-float {
   0%   { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
   50%  { transform: translate3d(3%, -2%, 0) scale(1.06) rotate(2deg); }
@@ -1861,8 +2520,6 @@ a.card:active,
   from { translate: -10px 0; }
   to   { translate: 12px 0; }
 }
-
-/* الواجهة */
 @keyframes rise-in {
   from { opacity: 0; transform: translateY(16px) scale(.985); }
 }
@@ -1920,9 +2577,16 @@ a.card:active,
   60%  { transform: scale(1.25) translateY(-3px); }
   100% { transform: scale(1) translateY(0); }
 }
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes pulse-text {
+  0%, 100% { opacity: .6; }
+  50%      { opacity: 1; }
+}
 
 /* ============================================================
-   32) Extra Utilities — أدوات إضافية جاهزة للاستخدام
+   37) Extra Utilities
    ============================================================ */
 
 .text-gradient {
@@ -1947,7 +2611,7 @@ a.card:active,
 }
 
 /* ============================================================
-   33) Responsive Tweaks
+   38) Responsive Tweaks
    ============================================================ */
 
 @media (max-width: 640px) {
@@ -2008,6 +2672,26 @@ a.card:active,
   .week-bar-wrap { height: 70px; }
   .week-label { font-size: .62rem; }
   .week-count { font-size: .72rem; }
+
+  .fab {
+    width: 54px;
+    height: 54px;
+    bottom: calc(18px + env(safe-area-inset-bottom));
+    left: 18px;
+    font-size: 1.4rem;
+  }
+  .floating-menu {
+    bottom: calc(86px + env(safe-area-inset-bottom));
+    left: 18px;
+    gap: 8px;
+  }
+  .floating-menu a {
+    padding: 10px 14px;
+    font-size: .85rem;
+  }
+  .floating-menu a .nav-ico { font-size: 1.1rem; }
+
+  .exam-countdown { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 380px) {
@@ -2022,7 +2706,11 @@ a.card:active,
   .avatar { width: 54px; height: 54px; font-size: 1.35rem; }
   .mini-num { font-size: 1.2rem; }
   .brand-logo { width: 34px; height: 34px; }
-  .bottom-nav { left: 6px; right: 6px; }
+  .fab {
+    width: 50px;
+    height: 50px;
+    font-size: 1.3rem;
+  }
 }
 
 @media (min-width: 900px) {
@@ -2034,7 +2722,7 @@ a.card:active,
 }
 
 /* ============================================================
-   34) Reduced Motion — احترام إعدادات تقليل الحركة
+   39) Reduced Motion
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
@@ -2044,7 +2732,6 @@ a.card:active,
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  /* الخلفية المتحركة تصير ثابتة تماماً */
   html::before, html::after, body::before, body::after {
     animation: none !important;
   }
