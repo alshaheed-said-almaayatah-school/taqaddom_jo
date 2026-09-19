@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0e1116" />
+  <title>المعدل والهدف | منصة تقدّم</title>
+  <link rel="icon" href="logo.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="grades">
+
+  <div id="loading" class="loading-screen">
+    <div class="loading-logo"><img src="logo.png" alt="تقدّم" /></div>
+    <div class="loading-spinner"></div>
+    <p class="loading-text">جاري التحميل…</p>
+  </div>
+
+  <div id="offline" class="offline-screen hidden">
+    <div class="offline-card">
+      <span class="offline-ico">📡</span>
+      <h2>لا يوجد اتصال بالإنترنت</h2>
+      <p>هذه المنصة تحتاج اتصالًا دائمًا.</p>
+      <button class="btn primary" onclick="location.reload()">إعادة المحاولة</button>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="container header-inner">
+      <a href="dashboard.html" class="brand">
+        <span class="brand-logo"><img src="logo.png" alt="تقدّم" /></span>
+        <span>المعدل والهدف<small>حلّل أداءك</small></span>
+      </a>
+      <div class="row">
+        <button class="icon-btn" data-theme-toggle type="button" aria-label="تبديل الوضع">🌙</button>
+        <a href="profile.html" class="icon-btn" aria-label="حسابي">👤</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container section">
+
+    <h1 class="mb-2">📈 المعدل والهدف</h1>
+    <p class="muted mb-3">أدخل علاماتك، وحدّد معدلك المطلوب، وشاهد فجوتك بوضوح.</p>
+
+    <!-- بطاقة المعدل -->
+    <section class="card grades-hero mb-3">
+      <div class="grade-big" id="gradeAverage">—</div>
+      <span class="grade-lbl">معدلك الحالي</span>
+
+      <div class="grade-progress-bar mt-3">
+        <span id="gradeBar" style="width:0%"></span>
+      </div>
+      <div class="grade-progress-labels" id="gradeLabels">
+        <span>معدلك: —</span>
+        <span>هدفك: —</span>
+      </div>
+    </section>
+
+    <!-- الفجوة + التحفيز -->
+    <div id="gradeGap" class="mb-3"></div>
+
+    <!-- هدف المعدل -->
+    <section class="card mb-3">
+      <h2 class="mb-2">🎯 معدلك المطلوب</h2>
+      <input type="number" class="grade-target-input" id="gradeTarget"
+             min="0" max="100" step="1" value="90"
+             placeholder="90" />
+      <p class="tiny center mt-2 mb-0">أدخل المعدل الذي تريد الوصول إليه (0 – 100).</p>
+    </section>
+
+    <!-- علامات المواد -->
+    <section class="card mb-3">
+      <h2 class="mb-2">📚 علاماتك لكل مادة</h2>
+      <p class="tiny muted mb-3">أدخل علامتك الحالية (0 – 100). اترك الحقل فارغًا للمواد التي لم تُقيَّم بعد.</p>
+      <div id="gradesSubjects"></div>
+    </section>
+
+    <p class="tiny center">💾 تُحفظ علاماتك تلقائيًا عند الكتابة.</p>
+
+  </main>
+
+  <!-- FAB -->
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <div class="floating-menu" id="floatingMenu">
+    <a href="dashboard.html"><span class="nav-ico">🏠</span>الرئيسية</a>
+    <a href="subjects.html"><span class="nav-ico">📚</span>المنهج</a>
+    <a href="exams.html"><span class="nav-ico">📅</span>الامتحانات</a>
+    <a href="tasks.html"><span class="nav-ico">✅</span>المهام</a>
+    <a href="grades.html"><span class="nav-ico">📈</span>المعدل</a>
+    <a href="statistics.html"><span class="nav-ico">📊</span>الإحصائيات</a>
+    <a href="focus.html"><span class="nav-ico">🧠</span>التركيز</a>
+    <a href="tools.html"><span class="nav-ico">🛠️</span>الأدوات</a>
+    <a href="community.html"><span class="nav-ico">💬</span>المجتمع</a>
+    <a href="profile.html"><span class="nav-ico">👤</span>الإعدادات</a>
+  </div>
+  <button class="fab" id="fabBtn" type="button" aria-label="القائمة">☰</button>
+
+  <footer class="footer">منصة تقدّم © <span id="year"></span></footer>
+
+  <script type="module" src="firebase.js"></script>
+
+  <script src="data.js"></script>
+  <script src="ui.js"></script>
+  <script src="auth.js"></script>
+  <script src="curriculum.js"></script>
+  <script src="progress.js"></script>
+  <script src="achievements.js"></script>
+  <script src="search.js"></script>
+  <script src="statistics.js"></script>
+  <script src="focus.js"></script>
+  <script src="exams.js"></script>
+  <script src="tasks.js"></script>
+  <script src="grades.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    (function () {
+      (async function () {
+        const user = await Auth.requireAuth();
+        if (!user) return;
+
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // تهيئة صفحة المعدل
+        Grades.init({
+          avgSelector: '#gradeAverage',
+          gapSelector: '#gradeGap',
+          subjectsSelector: '#gradesSubjects',
+          targetSelector: '#gradeTarget'
+        });
+      })();
+    })();
+  </script>
+</body>
+</html>
