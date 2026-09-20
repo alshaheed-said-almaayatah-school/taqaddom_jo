@@ -5,15 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0e1116" />
   <title>الدرس | منصة تقدّم</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f8cff'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='system-ui' font-weight='900' font-size='40' fill='white'%3E%D8%AA%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" href="logo.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body data-page="lesson">
+
+  <div id="loading" class="loading-screen">
+    <div class="loading-logo"><img src="logo.png" alt="تقدّم" /></div>
+    <div class="loading-spinner"></div>
+    <p class="loading-text">جاري التحميل…</p>
+  </div>
+
+  <div id="offline" class="offline-screen hidden">
+    <div class="offline-card">
+      <span class="offline-ico">📡</span>
+      <h2>لا يوجد اتصال بالإنترنت</h2>
+      <p>هذه المنصة تحتاج اتصالًا دائمًا.</p>
+      <button class="btn primary" onclick="location.reload()">إعادة المحاولة</button>
+    </div>
+  </div>
 
   <header class="header">
     <div class="container header-inner">
       <a href="dashboard.html" class="brand">
-        <span class="brand-logo">ت</span>
+        <span class="brand-logo"><img src="logo.png" alt="تقدّم" /></span>
         <span>الدرس<small id="headerCrumb">—</small></span>
       </a>
       <div class="row">
@@ -33,12 +48,15 @@
       <span id="crumbUnit">—</span>
     </div>
 
+    <!-- بطاقة الدرس -->
     <section class="card lesson-card mb-3">
       <div class="row-between wrap" style="gap:8px">
         <span class="badge" id="statusBadge">—</span>
         <span class="tiny" id="lessonMeta">—</span>
       </div>
+
       <h1 class="lesson-title" id="lessonTitle">—</h1>
+
       <div class="lesson-actions mt-3">
         <button class="btn ghost block" id="btnInProgress" type="button">◐ تحديد كـ منتصف الدرس</button>
         <button class="btn primary block" id="btnDone" type="button">✓ تم إنجاز الدرس</button>
@@ -46,6 +64,14 @@
       </div>
     </section>
 
+    <!-- الملاحظات -->
+    <section class="card notes-card mb-3">
+      <h3>📝 ملاحظاتك على الدرس</h3>
+      <textarea id="lessonNote" class="notes-textarea" placeholder="اكتب أفكارك، ملاحظاتك، أو ما تريد مراجعته لاحقًا…"></textarea>
+      <div class="notes-status" id="notesStatus"></div>
+    </section>
+
+    <!-- التنقل -->
     <section class="lesson-nav">
       <button class="btn ghost" id="btnPrev" type="button">← الدرس السابق</button>
       <a href="subjects.html" class="btn ghost">📚 المنهج</a>
@@ -54,15 +80,25 @@
 
   </main>
 
-  <nav class="bottom-nav">
+  <!-- FAB -->
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <div class="floating-menu" id="floatingMenu">
     <a href="dashboard.html"><span class="nav-ico">🏠</span>الرئيسية</a>
     <a href="subjects.html"><span class="nav-ico">📚</span>المنهج</a>
-    <a href="statistics.html"><span class="nav-ico">📊</span>إحصاءاتي</a>
-    <a href="focus.html"><span class="nav-ico">🧠</span>تركيز</a>
+    <a href="exams.html"><span class="nav-ico">📅</span>الامتحانات</a>
+    <a href="tasks.html"><span class="nav-ico">✅</span>المهام</a>
+    <a href="grades.html"><span class="nav-ico">📈</span>المعدل</a>
+    <a href="statistics.html"><span class="nav-ico">📊</span>الإحصائيات</a>
+    <a href="focus.html"><span class="nav-ico">🧠</span>التركيز</a>
+    <a href="tools.html"><span class="nav-ico">🛠️</span>الأدوات</a>
     <a href="community.html"><span class="nav-ico">💬</span>المجتمع</a>
-  </nav>
+    <a href="profile.html"><span class="nav-ico">👤</span>الإعدادات</a>
+  </div>
+  <button class="fab" id="fabBtn" type="button" aria-label="القائمة">☰</button>
 
   <footer class="footer">منصة تقدّم © <span id="year"></span></footer>
+
+  <script type="module" src="firebase.js"></script>
 
   <script src="data.js"></script>
   <script src="ui.js"></script>
@@ -73,104 +109,146 @@
   <script src="search.js"></script>
   <script src="statistics.js"></script>
   <script src="focus.js"></script>
+  <script src="exams.js"></script>
+  <script src="tasks.js"></script>
+  <script src="grades.js"></script>
   <script src="app.js"></script>
 
   <script>
     (function () {
-      const user = Auth.requireAuth();
-      if (!user) return;
-      document.getElementById('year').textContent = new Date().getFullYear();
+      (async function () {
+        const user = await Auth.requireAuth();
+        if (!user) return;
 
-      const params   = new URLSearchParams(location.search);
-      const lessonId = params.get('id');
-      const lesson   = lessonId ? Curriculum.getLesson(lessonId) : null;
+        document.getElementById('year').textContent = new Date().getFullYear();
 
-      if (!lesson) {
-        document.getElementById('lessonRoot').innerHTML =
-          '<div class="card center">' +
-            '<h2>لم يتم العثور على الدرس</h2>' +
-            '<p class="muted">تأكد أن الرابط يحتوي على معرّف درس صحيح.</p>' +
-            '<a href="subjects.html" class="btn primary mt-2">عودة إلى المنهج</a>' +
-          '</div>';
-        return;
-      }
+        const params   = new URLSearchParams(location.search);
+        const lessonId = params.get('id');
+        const lesson   = lessonId ? Curriculum.getLesson(lessonId) : null;
 
-      document.title = lesson.lesson_name + ' | منصة تقدّم';
-      document.getElementById('headerCrumb').textContent  = lesson.subject_name;
-      document.getElementById('crumbSubject').textContent = lesson.subject_name;
-      document.getElementById('crumbUnit').textContent    = 'الوحدة ' + lesson.unit_number + ': ' + lesson.unit_name;
-      document.getElementById('lessonTitle').textContent  = lesson.lesson_name;
-      document.getElementById('lessonMeta').textContent   = 'الدرس ' + lesson.lesson_number + ' من الوحدة ' + lesson.unit_number;
-
-      const badge   = document.getElementById('statusBadge');
-      const btnDone = document.getElementById('btnDone');
-      const btnInp  = document.getElementById('btnInProgress');
-      const btnUndo = document.getElementById('btnUndo');
-
-      function render() {
-        const st = Progress.getStatus(lesson.lesson_id);
-        badge.className = 'badge ' + (st === 'done' ? 'success' : st === 'inprogress' ? 'warning' : '');
-        badge.textContent = Progress.STATUS_LABEL[st];
-        btnDone.classList.toggle('hidden', st === 'done');
-        btnInp.classList.toggle('hidden', st === 'done' || st === 'inprogress');
-        btnUndo.classList.toggle('hidden', st !== 'done');
-      }
-
-      btnInp.addEventListener('click', function () {
-        Progress.markInProgress(lesson.lesson_id);
-        UI.toast('تم وضع الدرس في منتصف الطريق ◐', 'info');
-        render();
-      });
-
-      btnDone.addEventListener('click', async function () {
-        const ok = await UI.confirm({
-          title: 'تأكيد الإنجاز',
-          message: 'هل أنت متأكد أنك أنجزت هذا الدرس؟',
-          okText: 'نعم، أنجزته',
-          cancelText: 'إلغاء'
-        });
-        if (!ok) return;
-        const before = Achievements.list().filter(function (a) { return a.unlocked; }).length;
-        Progress.markDone(lesson.lesson_id);
-        UI.toast('تم إكمال الدرس ✓', 'success');
-        render();
-        const after = Achievements.list().filter(function (a) { return a.unlocked; });
-        if (after.length > before) {
-          const newest = after[after.length - 1];
-          setTimeout(function () { UI.toast('🏆 إنجاز: ' + newest.title, 'success', 4000); }, 400);
+        if (!lesson) {
+          document.getElementById('lessonRoot').innerHTML =
+            '<div class="card center">' +
+              '<h2>لم يتم العثور على الدرس</h2>' +
+              '<p class="muted">تأكد أن الرابط يحتوي على معرّف درس صحيح.</p>' +
+              '<a href="subjects.html" class="btn primary mt-2">عودة إلى المنهج</a>' +
+            '</div>';
+          return;
         }
-      });
 
-      btnUndo.addEventListener('click', async function () {
-        const ok = await UI.confirm({
-          title: 'إلغاء الإكمال',
-          message: 'هل تريد إلغاء إكمال هذا الدرس؟',
-          okText: 'نعم، ألغِ الإكمال',
-          cancelText: 'تراجع',
-          danger: true
+        document.title = lesson.lesson_name + ' | منصة تقدّم';
+        document.getElementById('headerCrumb').textContent  = lesson.subject_name;
+        document.getElementById('crumbSubject').textContent = lesson.subject_name;
+        document.getElementById('crumbUnit').textContent    = 'الوحدة ' + lesson.unit_number + ': ' + lesson.unit_name;
+        document.getElementById('lessonTitle').textContent  = lesson.lesson_name;
+        document.getElementById('lessonMeta').textContent   = 'الدرس ' + lesson.lesson_number + ' من الوحدة ' + lesson.unit_number;
+
+        /* ============ حالة الدرس ============ */
+        const badge   = document.getElementById('statusBadge');
+        const btnDone = document.getElementById('btnDone');
+        const btnInp  = document.getElementById('btnInProgress');
+        const btnUndo = document.getElementById('btnUndo');
+
+        function render() {
+          const st = Progress.getStatus(lesson.lesson_id);
+          badge.className = 'badge ' + (st === 'done' ? 'success' : st === 'inprogress' ? 'warning' : '');
+          badge.textContent = Progress.STATUS_LABEL[st];
+          btnDone.classList.toggle('hidden', st === 'done');
+          btnInp.classList.toggle('hidden', st === 'done' || st === 'inprogress');
+          btnUndo.classList.toggle('hidden', st !== 'done');
+        }
+
+        btnInp.addEventListener('click', async function () {
+          await Progress.markInProgress(lesson.lesson_id);
+          UI.toast('تم وضع الدرس في منتصف الطريق ◐', 'info');
+          render();
         });
-        if (!ok) return;
-        Progress.resetLesson(lesson.lesson_id);
-        UI.toast('تم إلغاء الإكمال', 'warning');
+
+        btnDone.addEventListener('click', async function () {
+          const ok = await UI.confirm({
+            title: 'تأكيد الإنجاز',
+            message: 'هل أنت متأكد أنك أنجزت هذا الدرس؟',
+            okText: 'نعم، أنجزته',
+            cancelText: 'إلغاء'
+          });
+          if (!ok) return;
+
+          const before = Achievements.list().filter(function (a) { return a.unlocked; }).length;
+          await Progress.markDone(lesson.lesson_id);
+          UI.toast('تم إكمال الدرس ✓', 'success');
+          render();
+
+          const after = Achievements.list().filter(function (a) { return a.unlocked; });
+          if (after.length > before) {
+            const newest = after[after.length - 1];
+            setTimeout(function () {
+              UI.toast('🏆 إنجاز: ' + newest.title, 'success', 4000);
+            }, 400);
+          }
+        });
+
+        btnUndo.addEventListener('click', async function () {
+          const ok = await UI.confirm({
+            title: 'إلغاء الإكمال',
+            message: 'هل تريد إلغاء إكمال هذا الدرس؟',
+            okText: 'نعم، ألغِ الإكمال',
+            cancelText: 'تراجع',
+            danger: true
+          });
+          if (!ok) return;
+          await Progress.resetLesson(lesson.lesson_id);
+          UI.toast('تم إلغاء الإكمال', 'warning');
+          render();
+        });
+
+        /* ============ الملاحظات ============ */
+        const noteEl = document.getElementById('lessonNote');
+        const statusEl = document.getElementById('notesStatus');
+
+        noteEl.value = Store.getLessonNote(lesson.lesson_id) || '';
+
+        let saveTimer = null;
+
+        noteEl.addEventListener('input', function () {
+          statusEl.textContent = 'جاري الحفظ…';
+          statusEl.className = 'notes-status saving';
+
+          if (saveTimer) clearTimeout(saveTimer);
+          saveTimer = setTimeout(async function () {
+            try {
+              await Store.setLessonNote(lesson.lesson_id, noteEl.value);
+              statusEl.textContent = '✓ تم الحفظ';
+              statusEl.className = 'notes-status saved';
+              setTimeout(function () {
+                statusEl.textContent = '';
+                statusEl.className = 'notes-status';
+              }, 2000);
+            } catch (e) {
+              statusEl.textContent = '✗ تعذّر الحفظ';
+              statusEl.className = 'notes-status error';
+            }
+          }, 800);
+        });
+
+        /* ============ التنقل ============ */
+        const prev = Curriculum.getPrevLesson(lesson.lesson_id);
+        const next = Curriculum.getNextLesson(lesson.lesson_id);
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+
+        if (!prev) btnPrev.disabled = true;
+        else btnPrev.addEventListener('click', function () {
+          location.href = 'lesson.html?id=' + encodeURIComponent(prev.lesson_id);
+        });
+
+        if (!next) btnNext.disabled = true;
+        else btnNext.addEventListener('click', function () {
+          location.href = 'lesson.html?id=' + encodeURIComponent(next.lesson_id);
+        });
+
+        /* ============ تشغيل ============ */
         render();
-      });
-
-      const prev = Curriculum.getPrevLesson(lesson.lesson_id);
-      const next = Curriculum.getNextLesson(lesson.lesson_id);
-      const btnPrev = document.getElementById('btnPrev');
-      const btnNext = document.getElementById('btnNext');
-
-      if (!prev) btnPrev.disabled = true;
-      else btnPrev.addEventListener('click', function () {
-        location.href = 'lesson.html?id=' + encodeURIComponent(prev.lesson_id);
-      });
-
-      if (!next) btnNext.disabled = true;
-      else btnNext.addEventListener('click', function () {
-        location.href = 'lesson.html?id=' + encodeURIComponent(next.lesson_id);
-      });
-
-      render();
+      })();
     })();
   </script>
 </body>
