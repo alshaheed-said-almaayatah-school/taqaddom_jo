@@ -10,14 +10,12 @@
 </head>
 <body data-page="dashboard">
 
-  <!-- Loading -->
   <div id="loading" class="loading-screen">
     <div class="loading-logo"><img src="logo.png" alt="تقدّم" /></div>
     <div class="loading-spinner"></div>
     <p class="loading-text">جاري التحميل…</p>
   </div>
 
-  <!-- Offline -->
   <div id="offline" class="offline-screen hidden">
     <div class="offline-card">
       <span class="offline-ico">📡</span>
@@ -27,7 +25,6 @@
     </div>
   </div>
 
-  <!-- Header -->
   <header class="header">
     <div class="container header-inner">
       <a href="dashboard.html" class="brand">
@@ -41,10 +38,9 @@
     </div>
   </header>
 
-  <!-- Main -->
   <main class="container section">
 
-    <!-- ترحيب -->
+    <!-- الترحيب -->
     <section class="card hero-card mb-3">
       <h1 class="hero-greet">أهلاً <span data-user-name>—</span> 👋</h1>
       <p class="hero-sub">جاهز تكمل تقدّمك اليوم؟</p>
@@ -54,7 +50,10 @@
       </div>
     </section>
 
-    <!-- إحصائيات سريعة -->
+    <!-- رسالة تحفيزية -->
+    <div id="motivationBox" class="mb-3"></div>
+
+    <!-- إحصائيات -->
     <section class="grid grid-2 mb-3">
       <div class="card stat-card">
         <div class="stat-head">
@@ -81,35 +80,58 @@
       <div class="mini-card"><span class="mini-num" id="cntNot">0</span><span class="mini-lbl">لم يبدأ</span></div>
     </section>
 
-    <!-- روابط سريعة -->
+    <!-- روابط سريعة للميزات الجديدة -->
     <section class="mb-3">
-      <h2 class="mb-2">🚀 روابط سريعة</h2>
+      <h2 class="mb-2">🚀 أدواتك السريعة</h2>
       <div class="tools-grid">
-        <a href="subjects.html" class="tool-card card hover">
-          <span class="tool-ico">📚</span>
-          <strong>المنهج</strong>
-          <p class="tiny mb-0">تابع دروسك وحدّث حالتها.</p>
-        </a>
-        <a href="focus.html" class="tool-card card hover">
-          <span class="tool-ico">🧠</span>
-          <strong>تركيز</strong>
-          <p class="tiny mb-0">Pomodoro واستراتيجيات.</p>
+        <a href="exams.html" class="tool-card card hover">
+          <span class="tool-ico">📅</span>
+          <strong>الامتحانات</strong>
+          <p class="tiny mb-0">عدّاد تنازلي لمواعيدك.</p>
         </a>
         <a href="tasks.html" class="tool-card card hover">
           <span class="tool-ico">✅</span>
           <strong>المهام</strong>
-          <p class="tiny mb-0">قائمة مهامك اليومية.</p>
+          <p class="tiny mb-0">نظّم مهامك اليومية.</p>
         </a>
-        <a href="exams.html" class="tool-card card hover">
-          <span class="tool-ico">📅</span>
-          <strong>الامتحانات</strong>
-          <p class="tiny mb-0">عدّاد تنازلي للمواعيد.</p>
+        <a href="grades.html" class="tool-card card hover">
+          <span class="tool-ico">📈</span>
+          <strong>المعدل والهدف</strong>
+          <p class="tiny mb-0">حلّل أداءك وحدّد هدفك.</p>
+        </a>
+        <a href="focus.html" class="tool-card card hover">
+          <span class="tool-ico">🧠</span>
+          <strong>التركيز</strong>
+          <p class="tiny mb-0">Pomodoro واستراتيجيات.</p>
         </a>
       </div>
     </section>
 
-    <section class="card center mb-3">
-      <p class="muted">سيتم إضافة المزيد قريبًا 🚀</p>
+    <!-- تقدم المواد -->
+    <section class="mb-3">
+      <div class="row-between mb-2">
+        <h2>📚 تقدم المواد</h2>
+        <a href="subjects.html" class="tiny">عرض الكل →</a>
+      </div>
+      <div id="subjectsList" class="subject-list"></div>
+    </section>
+
+    <!-- الأهداف -->
+    <section class="mb-3">
+      <h2 class="mb-2">🎯 أهدافك اليوم</h2>
+      <div id="goalsList" class="goals-list"></div>
+    </section>
+
+    <!-- النشاط الأخير -->
+    <section class="mb-3">
+      <h2 class="mb-2">🕒 النشاط الأخير</h2>
+      <div id="activityList" class="activity-list"></div>
+    </section>
+
+    <!-- الإنجازات -->
+    <section class="mb-3">
+      <h2 class="mb-2">🏆 إنجازاتك</h2>
+      <div id="achievementsList"></div>
     </section>
 
   </main>
@@ -132,10 +154,8 @@
 
   <footer class="footer">منصة تقدّم © <span id="year"></span></footer>
 
-  <!-- Firebase -->
   <script type="module" src="firebase.js"></script>
 
-  <!-- Core -->
   <script src="data.js"></script>
   <script src="ui.js"></script>
   <script src="auth.js"></script>
@@ -145,6 +165,9 @@
   <script src="search.js"></script>
   <script src="statistics.js"></script>
   <script src="focus.js"></script>
+  <script src="exams.js"></script>
+  <script src="tasks.js"></script>
+  <script src="grades.js"></script>
   <script src="app.js"></script>
 
   <script>
@@ -153,29 +176,108 @@
         const user = await Auth.requireAuth();
         if (!user) return;
 
-        // السنة
-        const y = document.getElementById('year');
-        if (y) y.textContent = new Date().getFullYear();
+        document.getElementById('year').textContent = new Date().getFullYear();
 
-        // عرض البيانات الأساسية إذا Store محمَّل
-        try {
-          if (window.Store && window.Progress) {
-            const o = Progress.overall();
-            document.getElementById('totalPct').textContent = o.percent + '%';
-            document.getElementById('totalBar').style.width = o.percent + '%';
-            document.getElementById('totalText').textContent = o.done + ' من ' + o.total + ' درسًا مكتمل';
-            document.getElementById('cntDone').textContent = o.done;
-            document.getElementById('cntInp').textContent = o.inprogress;
-            document.getElementById('cntNot').textContent = o.notstarted;
-            document.getElementById('streakNum').textContent = Progress.currentStreak();
-          }
-        } catch (e) {
-          console.warn('Dashboard stats:', e);
+        /* ============ النسبة العامة ============ */
+        function renderOverview() {
+          const o = Progress.overall();
+          document.getElementById('totalPct').textContent  = o.percent + '%';
+          document.getElementById('totalBar').style.width  = o.percent + '%';
+          document.getElementById('totalText').textContent = o.done + ' من ' + o.total + ' درسًا مكتمل';
+          document.getElementById('cntDone').textContent = o.done;
+          document.getElementById('cntInp').textContent  = o.inprogress;
+          document.getElementById('cntNot').textContent  = o.notstarted;
         }
 
-        // إخفاء شاشة التحميل (احتياط)
-        const loading = document.getElementById('loading');
-        if (loading) loading.classList.add('hidden');
+        /* ============ Streak ============ */
+        function renderStreak() {
+          document.getElementById('streakNum').textContent = Progress.currentStreak();
+        }
+
+        /* ============ مواد ============ */
+        function renderSubjects() {
+          const list = Progress.allSubjectsCounts();
+          const root = document.getElementById('subjectsList');
+          if (!list.length) { root.innerHTML = '<p class="muted">لا توجد مواد.</p>'; return; }
+          root.innerHTML = list.slice(0, 4).map(function (s) {
+            return '<a class="subject-row card hover" href="subjects.html#s-' + s.subjectId + '">' +
+              '<div class="row-between">' +
+                '<strong>' + UI.escape(s.name) + '</strong>' +
+                '<span class="badge ' + (s.percent === 100 ? 'success' : s.percent > 0 ? 'info' : '') + '">' + s.percent + '%</span>' +
+              '</div>' +
+              '<div class="progress mt-1"><span style="width:' + s.percent + '%"></span></div>' +
+            '</a>';
+          }).join('');
+        }
+
+        /* ============ أهداف ============ */
+        function renderGoals() {
+          const goals = Progress.goalsWithProgress();
+          const root = document.getElementById('goalsList');
+          if (!goals.length) { root.innerHTML = '<p class="muted">لا أهداف.</p>'; return; }
+          root.innerHTML = goals.map(function (g) {
+            const pct = Math.min(100, Math.round((g.value / g.target) * 100));
+            return '<div class="goal-row card ' + (g.achieved ? 'goal-done' : '') + '">' +
+              '<div class="row-between">' +
+                '<span>' + (g.achieved ? '✅' : '⭕') + ' ' + UI.escape(g.label) + '</span>' +
+                '<span class="tiny">' + g.value + ' / ' + g.target + '</span>' +
+              '</div>' +
+              '<div class="progress mt-1"><span style="width:' + pct + '%"></span></div>' +
+            '</div>';
+          }).join('');
+        }
+
+        /* ============ نشاط ============ */
+        function renderActivity() {
+          const items = Progress.recentActivity(6);
+          const root = document.getElementById('activityList');
+          if (!items.length) { root.innerHTML = '<p class="muted">لا يوجد نشاط بعد.</p>'; return; }
+          const ico = function (t) {
+            return { lesson:'📘', achievement:'🏆', focus:'🧠', account:'👤', goal:'🎯', task:'✅', exam:'📅' }[t] || '•';
+          };
+          root.innerHTML = items.map(function (a) {
+            return '<div class="activity-row">' +
+              '<span class="act-ico">' + ico(a.type) + '</span>' +
+              '<div class="grow">' +
+                '<div>' + UI.escape(a.message) + '</div>' +
+                '<div class="tiny">' + UI.fmtRelative(a.at) + '</div>' +
+              '</div>' +
+            '</div>';
+          }).join('');
+        }
+
+        /* ============ إنجازات ============ */
+        function renderAchievements() {
+          Achievements.renderCompact('#achievementsList', 6);
+        }
+
+        /* ============ رسالة تحفيزية ============ */
+        function renderMotivation() {
+          const box = document.getElementById('motivationBox');
+          if (!box) return;
+
+          const level = Statistics.studentLevel();
+          const recs = Statistics.recommendations();
+          const firstRec = recs[0] || { icon: '✨', text: 'استمر — أنت تسير بشكل ممتاز.' };
+
+          box.innerHTML =
+            '<div class="motivation-card card">' +
+              '<span class="motivation-ico">' + level.icon + '</span>' +
+              '<div class="grow">' +
+                '<h3>' + UI.escape(level.level) + ' — ' + level.percent + '%</h3>' +
+                '<p>' + UI.escape(firstRec.icon + ' ' + firstRec.text) + '</p>' +
+              '</div>' +
+            '</div>';
+        }
+
+        /* ============ تشغيل كل شيء ============ */
+        renderOverview();
+        renderStreak();
+        renderSubjects();
+        renderGoals();
+        renderActivity();
+        renderAchievements();
+        renderMotivation();
       })();
     })();
   </script>
