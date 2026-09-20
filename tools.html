@@ -4,17 +4,32 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0e1116" />
-  <title>أدوات الدراسة | منصة تقدّم</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f8cff'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='system-ui' font-weight='900' font-size='40' fill='white'%3E%D8%AA%3C/text%3E%3C/svg%3E" />
+  <title>الأدوات | منصة تقدّم</title>
+  <link rel="icon" href="logo.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body data-page="tools">
+
+  <div id="loading" class="loading-screen">
+    <div class="loading-logo"><img src="logo.png" alt="تقدّم" /></div>
+    <div class="loading-spinner"></div>
+    <p class="loading-text">جاري التحميل…</p>
+  </div>
+
+  <div id="offline" class="offline-screen hidden">
+    <div class="offline-card">
+      <span class="offline-ico">📡</span>
+      <h2>لا يوجد اتصال بالإنترنت</h2>
+      <p>هذه المنصة تحتاج اتصالًا دائمًا.</p>
+      <button class="btn primary" onclick="location.reload()">إعادة المحاولة</button>
+    </div>
+  </div>
 
   <header class="header">
     <div class="container header-inner">
       <a href="dashboard.html" class="brand">
-        <span class="brand-logo">ت</span>
-        <span>أدوات الدراسة<small>مساعدات عملية</small></span>
+        <span class="brand-logo"><img src="logo.png" alt="تقدّم" /></span>
+        <span>الأدوات<small>مساعدات عملية</small></span>
       </a>
       <div class="row">
         <button class="icon-btn" data-theme-toggle type="button" aria-label="تبديل الوضع">🌙</button>
@@ -25,9 +40,10 @@
 
   <main class="container section">
 
-    <h1 class="mb-2">🛠️ أدوات الدراسة</h1>
+    <h1 class="mb-2">🛠️ الأدوات</h1>
     <p class="muted mb-3">أدوات مختصرة تساعدك على الدراسة بذكاء.</p>
 
+    <!-- NotebookLM -->
     <a href="https://notebooklm.google.com" target="_blank" rel="noopener"
        class="card tool-hero mb-3" style="display:block; text-decoration:none; color:inherit;">
       <div class="row-between wrap" style="gap:10px">
@@ -39,6 +55,7 @@
       </div>
     </a>
 
+    <!-- أدوات المنصة -->
     <h2 class="mb-2">أدوات المنصة</h2>
     <div class="tools-grid mb-3">
       <a href="focus.html" class="tool-card card hover">
@@ -63,6 +80,7 @@
       </a>
     </div>
 
+    <!-- نصائح -->
     <h2 class="mb-2">💡 نصائح سريعة</h2>
     <div class="tips-list">
       <div class="tip-row card">
@@ -81,15 +99,24 @@
 
   </main>
 
-  <nav class="bottom-nav">
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <div class="floating-menu" id="floatingMenu">
     <a href="dashboard.html"><span class="nav-ico">🏠</span>الرئيسية</a>
     <a href="subjects.html"><span class="nav-ico">📚</span>المنهج</a>
-    <a href="statistics.html"><span class="nav-ico">📊</span>إحصاءاتي</a>
-    <a href="focus.html"><span class="nav-ico">🧠</span>تركيز</a>
+    <a href="exams.html"><span class="nav-ico">📅</span>الامتحانات</a>
+    <a href="tasks.html"><span class="nav-ico">✅</span>المهام</a>
+    <a href="grades.html"><span class="nav-ico">📈</span>المعدل</a>
+    <a href="statistics.html"><span class="nav-ico">📊</span>الإحصائيات</a>
+    <a href="focus.html"><span class="nav-ico">🧠</span>التركيز</a>
+    <a href="tools.html"><span class="nav-ico">🛠️</span>الأدوات</a>
     <a href="community.html"><span class="nav-ico">💬</span>المجتمع</a>
-  </nav>
+    <a href="profile.html"><span class="nav-ico">👤</span>الإعدادات</a>
+  </div>
+  <button class="fab" id="fabBtn" type="button" aria-label="القائمة">☰</button>
 
   <footer class="footer">منصة تقدّم © <span id="year"></span></footer>
+
+  <script type="module" src="firebase.js"></script>
 
   <script src="data.js"></script>
   <script src="ui.js"></script>
@@ -100,11 +127,19 @@
   <script src="search.js"></script>
   <script src="statistics.js"></script>
   <script src="focus.js"></script>
+  <script src="exams.js"></script>
+  <script src="tasks.js"></script>
+  <script src="grades.js"></script>
   <script src="app.js"></script>
 
   <script>
-    Auth.requireAuth();
-    document.getElementById('year').textContent = new Date().getFullYear();
+    (function () {
+      (async function () {
+        const user = await Auth.requireAuth();
+        if (!user) return;
+        document.getElementById('year').textContent = new Date().getFullYear();
+      })();
+    })();
   </script>
 </body>
 </html>
