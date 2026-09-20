@@ -5,15 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0e1116" />
   <title>المنهج | منصة تقدّم</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f8cff'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='system-ui' font-weight='900' font-size='40' fill='white'%3E%D8%AA%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" href="logo.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body data-page="subjects">
+
+  <div id="loading" class="loading-screen">
+    <div class="loading-logo"><img src="logo.png" alt="تقدّم" /></div>
+    <div class="loading-spinner"></div>
+    <p class="loading-text">جاري التحميل…</p>
+  </div>
+
+  <div id="offline" class="offline-screen hidden">
+    <div class="offline-card">
+      <span class="offline-ico">📡</span>
+      <h2>لا يوجد اتصال بالإنترنت</h2>
+      <p>هذه المنصة تحتاج اتصالًا دائمًا.</p>
+      <button class="btn primary" onclick="location.reload()">إعادة المحاولة</button>
+    </div>
+  </div>
 
   <header class="header">
     <div class="container header-inner">
       <a href="dashboard.html" class="brand">
-        <span class="brand-logo">ت</span>
+        <span class="brand-logo"><img src="logo.png" alt="تقدّم" /></span>
         <span>المنهج<small>الفصل الأول</small></span>
       </a>
       <div class="row">
@@ -25,29 +40,42 @@
 
   <main class="container section">
 
+    <!-- البحث -->
     <section class="card mb-3">
       <input type="search" id="searchInput" class="search-input" placeholder="ابحث عن مادة، وحدة، أو درس…" autocomplete="off" />
       <div id="searchResults" class="search-results hidden"></div>
     </section>
 
+    <!-- ملخص -->
     <section class="row-between mb-3">
       <h1>📚 كل المواد</h1>
       <span class="badge info" id="curriculumMeta">—</span>
     </section>
 
+    <!-- قائمة المواد -->
     <div id="subjectsContainer" class="subject-detail-list"></div>
 
   </main>
 
-  <nav class="bottom-nav">
+  <!-- FAB -->
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <div class="floating-menu" id="floatingMenu">
     <a href="dashboard.html"><span class="nav-ico">🏠</span>الرئيسية</a>
     <a href="subjects.html"><span class="nav-ico">📚</span>المنهج</a>
-    <a href="statistics.html"><span class="nav-ico">📊</span>إحصاءاتي</a>
-    <a href="focus.html"><span class="nav-ico">🧠</span>تركيز</a>
+    <a href="exams.html"><span class="nav-ico">📅</span>الامتحانات</a>
+    <a href="tasks.html"><span class="nav-ico">✅</span>المهام</a>
+    <a href="grades.html"><span class="nav-ico">📈</span>المعدل</a>
+    <a href="statistics.html"><span class="nav-ico">📊</span>الإحصائيات</a>
+    <a href="focus.html"><span class="nav-ico">🧠</span>التركيز</a>
+    <a href="tools.html"><span class="nav-ico">🛠️</span>الأدوات</a>
     <a href="community.html"><span class="nav-ico">💬</span>المجتمع</a>
-  </nav>
+    <a href="profile.html"><span class="nav-ico">👤</span>الإعدادات</a>
+  </div>
+  <button class="fab" id="fabBtn" type="button" aria-label="القائمة">☰</button>
 
   <footer class="footer">منصة تقدّم © <span id="year"></span></footer>
+
+  <script type="module" src="firebase.js"></script>
 
   <script src="data.js"></script>
   <script src="ui.js"></script>
@@ -58,87 +86,106 @@
   <script src="search.js"></script>
   <script src="statistics.js"></script>
   <script src="focus.js"></script>
+  <script src="exams.js"></script>
+  <script src="tasks.js"></script>
+  <script src="grades.js"></script>
   <script src="app.js"></script>
 
   <script>
     (function () {
-      const user = Auth.requireAuth();
-      if (!user) return;
-      document.getElementById('year').textContent = new Date().getFullYear();
+      (async function () {
+        const user = await Auth.requireAuth();
+        if (!user) return;
 
-      const stats = Curriculum.getStats();
-      document.getElementById('curriculumMeta').textContent =
-        stats.totalSubjects + ' مواد · ' + stats.totalUnits + ' وحدة · ' + stats.totalLessons + ' درسًا';
+        document.getElementById('year').textContent = new Date().getFullYear();
 
-      function renderSubjects() {
-        const subjects = Curriculum.getSubjects();
-        const root = document.getElementById('subjectsContainer');
+        /* ============ ملخص ============ */
+        const stats = Curriculum.getStats();
+        document.getElementById('curriculumMeta').textContent =
+          stats.totalSubjects + ' مواد · ' + stats.totalUnits + ' وحدة · ' + stats.totalLessons + ' درسًا';
 
-        root.innerHTML = subjects.map(function (sub) {
-          const sc = Progress.subjectCounts(sub.id);
-          return '<section class="subject-block card" id="s-' + sub.id + '">' +
-            '<header class="subject-head" data-toggle-subject>' +
-              '<div class="grow">' +
-                '<div class="row-between">' +
-                  '<h2 class="mb-0">' + UI.escape(sub.name) + '</h2>' +
-                  '<span class="badge ' + (sc.percent === 100 ? 'success' : sc.percent > 0 ? 'info' : '') + '">' + sc.percent + '%</span>' +
-                '</div>' +
-                '<p class="tiny mt-1">' + sub.unitsCount + ' وحدات · ' + sub.lessonsCount + ' درسًا · ✓ ' + sc.done + ' · ◐ ' + sc.inprogress + ' · ○ ' + sc.notstarted + '</p>' +
-                '<div class="progress mt-1"><span style="width:' + sc.percent + '%"></span></div>' +
-              '</div>' +
-            '</header>' +
-            '<div class="units-list" hidden>' +
-              sub.units.map(function (u) {
-                const uc = Progress.unitCounts(sub.id, u.unit_number);
-                return '<div class="unit-block">' +
-                  '<div class="unit-head">' +
-                    '<div class="row-between">' +
-                      '<strong>الوحدة ' + u.unit_number + ': ' + UI.escape(u.name) + '</strong>' +
-                      '<span class="badge ' + (uc.percent === 100 ? 'success' : uc.percent > 0 ? 'info' : '') + '">' + uc.percent + '%</span>' +
-                    '</div>' +
-                    '<div class="progress mt-1"><span style="width:' + uc.percent + '%"></span></div>' +
+        /* ============ عرض المواد ============ */
+        function renderSubjects() {
+          const subjects = Curriculum.getSubjects();
+          const root = document.getElementById('subjectsContainer');
+          const notes = Store.getNotes();
+
+          root.innerHTML = subjects.map(function (sub) {
+            const sc = Progress.subjectCounts(sub.id);
+
+            return '<section class="subject-block card" id="s-' + sub.id + '">' +
+              '<header class="subject-head" data-toggle-subject>' +
+                '<div class="grow">' +
+                  '<div class="row-between">' +
+                    '<h2 class="mb-0">' + UI.escape(sub.name) + '</h2>' +
+                    '<span class="badge ' + (sc.percent === 100 ? 'success' : sc.percent > 0 ? 'info' : '') + '">' + sc.percent + '%</span>' +
                   '</div>' +
-                  '<ul class="lessons-mini">' +
-                    u.lessons.map(function (l) {
-                      const st = Progress.getStatus(l.lesson_id);
-                      const cls = st === 'done' ? 'done' : st === 'inprogress' ? 'inp' : '';
-                      const ico = st === 'done' ? '✓' : st === 'inprogress' ? '◐' : '○';
-                      return '<li class="lesson-mini ' + cls + '">' +
-                        '<a href="lesson.html?id=' + encodeURIComponent(l.lesson_id) + '">' +
-                          '<span class="lm-ico">' + ico + '</span>' +
-                          '<span class="lm-name">' + UI.escape(l.lesson_name) + '</span>' +
-                        '</a>' +
-                      '</li>';
-                    }).join('') +
-                  '</ul>' +
-                '</div>';
-              }).join('') +
-            '</div>' +
-          '</section>';
-        }).join('');
+                  '<p class="tiny mt-1">' + sub.unitsCount + ' وحدات · ' + sub.lessonsCount + ' درسًا · ✓ ' + sc.done + ' · ◐ ' + sc.inprogress + ' · ○ ' + sc.notstarted + '</p>' +
+                  '<div class="progress mt-1"><span style="width:' + sc.percent + '%"></span></div>' +
+                '</div>' +
+              '</header>' +
 
-        UI.els('[data-toggle-subject]').forEach(function (head) {
-          head.addEventListener('click', function () {
-            const block = head.closest('.subject-block');
-            const list = block.querySelector('.units-list');
-            list.hidden = !list.hidden;
-            block.classList.toggle('open', !list.hidden);
+              '<div class="units-list" hidden>' +
+                sub.units.map(function (u) {
+                  const uc = Progress.unitCounts(sub.id, u.unit_number);
+                  return '<div class="unit-block">' +
+                    '<div class="unit-head">' +
+                      '<div class="row-between">' +
+                        '<strong>الوحدة ' + u.unit_number + ': ' + UI.escape(u.name) + '</strong>' +
+                        '<span class="badge ' + (uc.percent === 100 ? 'success' : uc.percent > 0 ? 'info' : '') + '">' + uc.percent + '%</span>' +
+                      '</div>' +
+                      '<div class="progress mt-1"><span style="width:' + uc.percent + '%"></span></div>' +
+                    '</div>' +
+                    '<ul class="lessons-mini">' +
+                      u.lessons.map(function (l) {
+                        const st = Progress.getStatus(l.lesson_id);
+                        const cls = st === 'done' ? 'done' : st === 'inprogress' ? 'inp' : '';
+                        const ico = st === 'done' ? '✓' : st === 'inprogress' ? '◐' : '○';
+                        const hasNote = !!notes[l.lesson_id];
+                        return '<li class="lesson-mini ' + cls + (hasNote ? ' has-note' : '') + '">' +
+                          '<a href="lesson.html?id=' + encodeURIComponent(l.lesson_id) + '">' +
+                            '<span class="lm-ico">' + ico + '</span>' +
+                            '<span class="lm-name">' + UI.escape(l.lesson_name) + '</span>' +
+                          '</a>' +
+                        '</li>';
+                      }).join('') +
+                    '</ul>' +
+                  '</div>';
+                }).join('') +
+              '</div>' +
+            '</section>';
+          }).join('');
+
+          /* فتح/إغلاق */
+          UI.els('[data-toggle-subject]').forEach(function (head) {
+            head.addEventListener('click', function () {
+              const block = head.closest('.subject-block');
+              const list = block.querySelector('.units-list');
+              list.hidden = !list.hidden;
+              block.classList.toggle('open', !list.hidden);
+            });
           });
-        });
 
-        if (location.hash.indexOf('#s-') === 0) {
-          const el = document.querySelector(location.hash);
-          if (el) {
-            const list = el.querySelector('.units-list');
-            if (list) list.hidden = false;
-            el.classList.add('open');
-            setTimeout(function () { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+          /* فتح المادة إذا كان الـ hash */
+          if (location.hash.indexOf('#s-') === 0) {
+            const el = document.querySelector(location.hash);
+            if (el) {
+              const list = el.querySelector('.units-list');
+              if (list) list.hidden = false;
+              el.classList.add('open');
+              setTimeout(function () {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }, 100);
+            }
           }
         }
-      }
 
-      Search.bind('#searchInput', '#searchResults');
-      renderSubjects();
+        /* ============ بحث ============ */
+        Search.bind('#searchInput', '#searchResults');
+
+        /* ============ تشغيل ============ */
+        renderSubjects();
+      })();
     })();
   </script>
 </body>
