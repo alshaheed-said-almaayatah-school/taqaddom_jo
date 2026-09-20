@@ -5,20 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0e1116" />
   <title>عن المنصة | منصة تقدّم</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f8cff'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='system-ui' font-weight='900' font-size='40' fill='white'%3E%D8%AA%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" href="logo.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body data-page="about">
+
+  <div id="loading" class="loading-screen">
+    <div class="loading-logo"><img src="logo.png" alt="تقدّم" /></div>
+    <div class="loading-spinner"></div>
+    <p class="loading-text">جاري التحميل…</p>
+  </div>
 
   <header class="header">
     <div class="container header-inner">
-      <a href="index.html" class="brand">
-        <span class="brand-logo">ت</span>
+      <a href="dashboard.html" class="brand">
+        <span class="brand-logo"><img src="logo.png" alt="تقدّم" /></span>
         <span>عن المنصة<small>من نحن</small></span>
       </a>
       <div class="row">
         <button class="icon-btn" data-theme-toggle type="button" aria-label="تبديل الوضع">🌙</button>
-        <a href="profile.html" class="icon-btn" data-require-auth aria-label="حسابي" style="display:none">👤</a>
+        <a href="profile.html" class="icon-btn" aria-label="حسابي">👤</a>
       </div>
     </div>
   </header>
@@ -26,62 +32,30 @@
   <main class="container section">
 
     <section class="card about-hero mb-3">
-      <span class="brand-logo" aria-hidden="true">ت</span>
+      <span class="brand-logo" aria-hidden="true"><img src="logo.png" alt="تقدّم" /></span>
       <h1>منصة تقدّم</h1>
       <p class="muted">مجتمع جيل 2011 — الصف العاشر، الأردن</p>
     </section>
 
     <section class="card mb-3">
       <h2 class="mb-2">🎯 هدف المنصة</h2>
-      <p class="muted">
-        مساعدة طالب الصف العاشر على تنظيم دراسته، معرفة أين وصل في المنهج،
-        تقليل التشتت، ومتابعة تقدمه حتى إكمال المنهج بالكامل.
-      </p>
-      <p class="muted mb-0">
-        ليست منصة محتوى — لا نكتب دروسًا ولا نلخّص مناهج. نقدّم إطارًا
-        منظّمًا يساعدك على معرفة أين أنت، وما الذي يجب أن تنجزه تاليًا.
-      </p>
+      <p class="muted">مساعدة طالب الصف العاشر على تنظيم دراسته، معرفة أين وصل في المنهج، تقليل التشتت، ومتابعة تقدمه حتى إكمال المنهج بالكامل.</p>
+      <p class="muted mb-0">ليست منصة محتوى — لا نكتب دروسًا ولا نلخّص مناهج. نقدّم إطارًا منظّمًا يساعدك على معرفة أين أنت، وما الذي يجب أن تنجزه تاليًا.</p>
     </section>
 
     <h2 class="mb-2">✨ ما الذي يجعلها مفيدة؟</h2>
     <div class="feature-grid mb-3" style="padding:0">
-      <div class="feature">
-        <div class="ico">🧭</div>
-        <h3>وضوح المسار</h3>
-        <p>تعرف بالضبط أين أنت في كل مادة، وما تبقّى أمامك.</p>
-      </div>
-      <div class="feature">
-        <div class="ico">📊</div>
-        <h3>حسابات دقيقة</h3>
-        <p>نسب الإنجاز محسوبة من حالات دروسك الفعلية — لا أرقام وهمية.</p>
-      </div>
-      <div class="feature">
-        <div class="ico">🎯</div>
-        <h3>أهداف وأيام نشاط</h3>
-        <p>سلسلة أيام متتالية، أهداف يومية، وسجل نشاط حقيقي.</p>
-      </div>
-      <div class="feature">
-        <div class="ico">🧠</div>
-        <h3>تركيز فعلي</h3>
-        <p>Pomodoro واستراتيجيات عملية للدراسة العميقة.</p>
-      </div>
-      <div class="feature">
-        <div class="ico">📱</div>
-        <h3>مصمّمة للهاتف</h3>
-        <p>تجربة سريعة ومريحة على الجوال قبل أي شيء آخر.</p>
-      </div>
-      <div class="feature">
-        <div class="ico">🔒</div>
-        <h3>بياناتك عندك</h3>
-        <p>كل شيء محفوظ على جهازك — بدون حساب سحابي.</p>
-      </div>
+      <div class="feature"><div class="ico">🧭</div><h3>وضوح المسار</h3><p>تعرف بالضبط أين أنت في كل مادة.</p></div>
+      <div class="feature"><div class="ico">📊</div><h3>حسابات دقيقة</h3><p>نسب الإنجاز محسوبة من حالات دروسك الفعلية.</p></div>
+      <div class="feature"><div class="ico">📅</div><h3>امتحانات ومهام</h3><p>عدّاد تنازلي وقائمة مهام يومية.</p></div>
+      <div class="feature"><div class="ico">📈</div><h3>معدلك وهدفك</h3><p>حلّل أداءك واعرف فجوتك عن هدفك.</p></div>
+      <div class="feature"><div class="ico">🧠</div><h3>تركيز فعلي</h3><p>Pomodoro واستراتيجيات عملية.</p></div>
+      <div class="feature"><div class="ico">☁️</div><h3>بياناتك في السحابة</h3><p>افتح من أي جهاز، وستجد كل شيء.</p></div>
     </div>
 
     <section class="card mb-3">
       <h2 class="mb-2">📚 المنهج</h2>
-      <p class="tiny muted mb-2">
-        البيانات مأخوذة من المنهاج الأردني الرسمي — المركز الوطني لتطوير المناهج.
-      </p>
+      <p class="tiny muted mb-2">البيانات من المنهاج الأردني الرسمي — المركز الوطني لتطوير المناهج.</p>
       <div class="row wrap" style="gap:8px">
         <span class="badge info" id="metaSubjects">—</span>
         <span class="badge info" id="metaUnits">—</span>
@@ -92,18 +66,31 @@
     <section class="card mb-3">
       <h2 class="mb-2">💬 تواصل معنا</h2>
       <p class="muted mb-2">قناة Telegram الرسمية لمجتمع جيل 2011.</p>
-      <a id="tgLink" href="#" target="_blank" rel="noopener" class="btn primary">
-        انضم إلى القناة →
-      </a>
+      <a href="https://t.me/grade10jjo" target="_blank" rel="noopener" class="btn primary">انضم إلى القناة →</a>
     </section>
 
-    <p class="tiny center mt-3">
-      منصة تقدّم — إصدار 1.0
-    </p>
+    <p class="tiny center mt-3">منصة تقدّم — إصدار 1.0</p>
 
   </main>
 
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <div class="floating-menu" id="floatingMenu">
+    <a href="dashboard.html"><span class="nav-ico">🏠</span>الرئيسية</a>
+    <a href="subjects.html"><span class="nav-ico">📚</span>المنهج</a>
+    <a href="exams.html"><span class="nav-ico">📅</span>الامتحانات</a>
+    <a href="tasks.html"><span class="nav-ico">✅</span>المهام</a>
+    <a href="grades.html"><span class="nav-ico">📈</span>المعدل</a>
+    <a href="statistics.html"><span class="nav-ico">📊</span>الإحصائيات</a>
+    <a href="focus.html"><span class="nav-ico">🧠</span>التركيز</a>
+    <a href="tools.html"><span class="nav-ico">🛠️</span>الأدوات</a>
+    <a href="community.html"><span class="nav-ico">💬</span>المجتمع</a>
+    <a href="profile.html"><span class="nav-ico">👤</span>الإعدادات</a>
+  </div>
+  <button class="fab" id="fabBtn" type="button" aria-label="القائمة">☰</button>
+
   <footer class="footer">منصة تقدّم © <span id="year"></span></footer>
+
+  <script type="module" src="firebase.js"></script>
 
   <script src="data.js"></script>
   <script src="ui.js"></script>
@@ -114,29 +101,24 @@
   <script src="search.js"></script>
   <script src="statistics.js"></script>
   <script src="focus.js"></script>
+  <script src="exams.js"></script>
+  <script src="tasks.js"></script>
+  <script src="grades.js"></script>
   <script src="app.js"></script>
 
   <script>
     (function () {
-      document.getElementById('year').textContent = new Date().getFullYear();
+      (async function () {
+        const user = await Auth.requireAuth();
+        if (!user) return;
 
-      /* ===== الإحصاءات ===== */
-      const s = Curriculum.getStats();
-      document.getElementById('metaSubjects').textContent = `${s.totalSubjects} مادة`;
-      document.getElementById('metaUnits').textContent    = `${s.totalUnits} وحدة`;
-      document.getElementById('metaLessons').textContent  = `${s.totalLessons} درسًا`;
+        document.getElementById('year').textContent = new Date().getFullYear();
 
-      /* ===== Telegram ===== */
-      const link = document.getElementById('tgLink');
-      const url  = (Curriculum.getMeta().external || {}).telegram || '';
-      if (url) {
-        link.href = url;
-      } else {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          UI.toast('لم يتم ضبط رابط Telegram بعد.', 'warning');
-        });
-      }
+        const s = Curriculum.getStats();
+        document.getElementById('metaSubjects').textContent = s.totalSubjects + ' مادة';
+        document.getElementById('metaUnits').textContent    = s.totalUnits + ' وحدة';
+        document.getElementById('metaLessons').textContent  = s.totalLessons + ' درسًا';
+      })();
     })();
   </script>
 </body>
