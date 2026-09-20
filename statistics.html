@@ -4,17 +4,32 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0e1116" />
-  <title>إحصائياتي | منصة تقدّم</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f8cff'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='system-ui' font-weight='900' font-size='40' fill='white'%3E%D8%AA%3C/text%3E%3C/svg%3E" />
+  <title>الإحصائيات | منصة تقدّم</title>
+  <link rel="icon" href="logo.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body data-page="statistics">
+
+  <div id="loading" class="loading-screen">
+    <div class="loading-logo"><img src="logo.png" alt="تقدّم" /></div>
+    <div class="loading-spinner"></div>
+    <p class="loading-text">جاري التحميل…</p>
+  </div>
+
+  <div id="offline" class="offline-screen hidden">
+    <div class="offline-card">
+      <span class="offline-ico">📡</span>
+      <h2>لا يوجد اتصال بالإنترنت</h2>
+      <p>هذه المنصة تحتاج اتصالًا دائمًا.</p>
+      <button class="btn primary" onclick="location.reload()">إعادة المحاولة</button>
+    </div>
+  </div>
 
   <header class="header">
     <div class="container header-inner">
       <a href="dashboard.html" class="brand">
-        <span class="brand-logo">ت</span>
-        <span>إحصائياتي<small>تحليل مستواك</small></span>
+        <span class="brand-logo"><img src="logo.png" alt="تقدّم" /></span>
+        <span>الإحصائيات<small>تحليل مستواك</small></span>
       </a>
       <div class="row">
         <button class="icon-btn" data-theme-toggle type="button" aria-label="تبديل الوضع">🌙</button>
@@ -27,7 +42,8 @@
 
     <h1 class="mb-3">📊 إحصائياتي</h1>
 
-    <section class="card level-card mb-3" id="levelCard">
+    <!-- مستوى الطالب -->
+    <section class="card level-card mb-3">
       <div class="level-icon" id="levelIcon">🌱</div>
       <div class="grow">
         <div class="row-between wrap" style="gap:6px">
@@ -38,6 +54,7 @@
       </div>
     </section>
 
+    <!-- الأرقام الرئيسية -->
     <section class="grid grid-3 mb-3">
       <div class="card stat-block">
         <div class="stat-value" id="statPercent">0%</div>
@@ -53,6 +70,7 @@
       </div>
     </section>
 
+    <!-- توزيع الدروس -->
     <section class="card mb-3">
       <h2 class="mb-2">🎯 توزيع الدروس</h2>
       <div class="dist-bar mb-3">
@@ -67,6 +85,7 @@
       </div>
     </section>
 
+    <!-- أرقام فرعية -->
     <section class="grid grid-3 mb-3">
       <div class="mini-card"><span class="mini-num" id="statActiveDays">0</span><span class="mini-lbl">يوم نشاط</span></div>
       <div class="mini-card"><span class="mini-num" id="statFocusTotal">0</span><span class="mini-lbl">جلسة تركيز</span></div>
@@ -79,45 +98,60 @@
       <div class="mini-card"><span class="mini-num" id="statAch">0</span><span class="mini-lbl">إنجاز</span></div>
     </section>
 
+    <!-- نشاط الأسبوع -->
     <section class="card mb-3">
       <h2 class="mb-2">📅 نشاطك آخر 7 أيام</h2>
       <div class="week-grid" id="weekGrid"></div>
       <p class="tiny mt-2 mb-0" id="weekSummary">—</p>
     </section>
 
+    <!-- توصيات -->
     <section class="card mb-3">
       <h2 class="mb-2">💡 توصيات لك</h2>
       <div class="recs-list" id="recsList"></div>
     </section>
 
+    <!-- أكثر المواد تقدمًا -->
     <section class="card mb-3">
       <h2 class="mb-2">🚀 أكثر المواد تقدمًا</h2>
       <div class="bars-list" id="topSubjects"></div>
     </section>
 
+    <!-- تحتاج اهتمامًا -->
     <section class="card mb-3">
       <h2 class="mb-2">⚠️ تحتاج إلى اهتمام</h2>
       <div class="bars-list" id="weakSubjects"></div>
     </section>
 
+    <!-- كل المواد -->
     <section class="card mb-3">
       <h2 class="mb-2">📚 تقدم كل المواد</h2>
       <div class="bars-list" id="allSubjects"></div>
     </section>
 
+    <!-- الإنجازات -->
     <section class="card mb-3" id="achievementsBlock"></section>
 
   </main>
 
-  <nav class="bottom-nav">
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <div class="floating-menu" id="floatingMenu">
     <a href="dashboard.html"><span class="nav-ico">🏠</span>الرئيسية</a>
     <a href="subjects.html"><span class="nav-ico">📚</span>المنهج</a>
-    <a href="statistics.html"><span class="nav-ico">📊</span>إحصاءاتي</a>
-    <a href="focus.html"><span class="nav-ico">🧠</span>تركيز</a>
+    <a href="exams.html"><span class="nav-ico">📅</span>الامتحانات</a>
+    <a href="tasks.html"><span class="nav-ico">✅</span>المهام</a>
+    <a href="grades.html"><span class="nav-ico">📈</span>المعدل</a>
+    <a href="statistics.html"><span class="nav-ico">📊</span>الإحصائيات</a>
+    <a href="focus.html"><span class="nav-ico">🧠</span>التركيز</a>
+    <a href="tools.html"><span class="nav-ico">🛠️</span>الأدوات</a>
     <a href="community.html"><span class="nav-ico">💬</span>المجتمع</a>
-  </nav>
+    <a href="profile.html"><span class="nav-ico">👤</span>الإعدادات</a>
+  </div>
+  <button class="fab" id="fabBtn" type="button" aria-label="القائمة">☰</button>
 
   <footer class="footer">منصة تقدّم © <span id="year"></span></footer>
+
+  <script type="module" src="firebase.js"></script>
 
   <script src="data.js"></script>
   <script src="ui.js"></script>
@@ -128,84 +162,93 @@
   <script src="search.js"></script>
   <script src="statistics.js"></script>
   <script src="focus.js"></script>
+  <script src="exams.js"></script>
+  <script src="tasks.js"></script>
+  <script src="grades.js"></script>
   <script src="app.js"></script>
 
   <script>
     (function () {
-      const user = Auth.requireAuth();
-      if (!user) return;
-      document.getElementById('year').textContent = new Date().getFullYear();
+      (async function () {
+        const user = await Auth.requireAuth();
+        if (!user) return;
 
-      const s  = Statistics.snapshot();
-      const lv = Statistics.studentLevel();
+        document.getElementById('year').textContent = new Date().getFullYear();
 
-      document.getElementById('levelIcon').textContent  = lv.icon;
-      document.getElementById('levelTitle').textContent = lv.level;
-      document.getElementById('levelMsg').textContent   = lv.message;
+        const s  = Statistics.snapshot();
+        const lv = Statistics.studentLevel();
 
-      const badge = document.getElementById('levelBadge');
-      badge.className = 'badge ' + lv.color;
-      badge.textContent = lv.percent + '%';
+        document.getElementById('levelIcon').textContent  = lv.icon;
+        document.getElementById('levelTitle').textContent = lv.level;
+        document.getElementById('levelMsg').textContent   = lv.message;
 
-      document.getElementById('statPercent').textContent = s.overall.percent + '%';
-      document.getElementById('statDone').textContent    = s.overall.done;
-      document.getElementById('statStreak').textContent  = s.streak;
+        const badge = document.getElementById('levelBadge');
+        badge.className = 'badge ' + lv.color;
+        badge.textContent = lv.percent + '%';
 
-      const dist = Statistics.distribution();
-      document.getElementById('distDone').textContent = dist.done.count;
-      document.getElementById('distInp').textContent  = dist.inprogress.count;
-      document.getElementById('distNot').textContent  = dist.notstarted.count;
-      document.getElementById('distDoneBar').style.width = dist.done.percent + '%';
-      document.getElementById('distInpBar').style.width  = dist.inprogress.percent + '%';
-      document.getElementById('distNotBar').style.width  = dist.notstarted.percent + '%';
+        document.getElementById('statPercent').textContent = s.overall.percent + '%';
+        document.getElementById('statDone').textContent    = s.overall.done;
+        document.getElementById('statStreak').textContent  = s.streak;
 
-      document.getElementById('statActiveDays').textContent   = s.activeDays;
-      document.getElementById('statFocusTotal').textContent   = s.focusTotal;
-      document.getElementById('statFocusMin').textContent     = s.focusMinutes;
-      document.getElementById('statLessonsToday').textContent = s.lessonsToday;
-      document.getElementById('statGoalsDone').textContent    = s.goalsDone;
-      document.getElementById('statAch').textContent          = s.achievements.unlocked;
+        const dist = Statistics.distribution();
+        document.getElementById('distDone').textContent = dist.done.count;
+        document.getElementById('distInp').textContent  = dist.inprogress.count;
+        document.getElementById('distNot').textContent  = dist.notstarted.count;
+        document.getElementById('distDoneBar').style.width = dist.done.percent + '%';
+        document.getElementById('distInpBar').style.width  = dist.inprogress.percent + '%';
+        document.getElementById('distNotBar').style.width  = dist.notstarted.percent + '%';
 
-      const week = Statistics.weekActivity();
-      const maxCount = Math.max(1, Math.max.apply(null, week.map(function (d) { return d.count; })));
-      document.getElementById('weekGrid').innerHTML = week.map(function (d) {
-        const h = d.count === 0 ? 4 : Math.round((d.count / maxCount) * 100);
-        const active = d.count > 0 ? 'active' : '';
-        return '<div class="week-day ' + active + '">' +
-                 '<div class="week-bar-wrap"><div class="week-bar" style="height:' + h + '%"></div></div>' +
-                 '<span class="week-count">' + d.count + '</span>' +
-                 '<span class="week-label">' + d.weekday + '</span>' +
-               '</div>';
-      }).join('');
+        document.getElementById('statActiveDays').textContent   = s.activeDays;
+        document.getElementById('statFocusTotal').textContent   = s.focusTotal;
+        document.getElementById('statFocusMin').textContent     = s.focusMinutes;
+        document.getElementById('statLessonsToday').textContent = s.lessonsToday;
+        document.getElementById('statGoalsDone').textContent    = s.goalsDone;
+        document.getElementById('statAch').textContent          = s.achievements.unlocked;
 
-      const totalWeek = week.reduce(function (sum, d) { return sum + d.count; }, 0);
-      const activeDays = week.filter(function (d) { return d.count > 0; }).length;
-      document.getElementById('weekSummary').textContent =
-        activeDays + ' أيام نشاط هذا الأسبوع · ' + totalWeek + ' حدث';
-
-      document.getElementById('recsList').innerHTML = Statistics.recommendations().map(function (r) {
-        return '<div class="rec-row card"><span class="rec-ico">' + r.icon + '</span><span>' + UI.escape(r.text) + '</span></div>';
-      }).join('');
-
-      function renderBars(id, list) {
-        const root = document.getElementById(id);
-        if (!list.length) { root.innerHTML = '<p class="tiny muted">لا توجد بيانات.</p>'; return; }
-        root.innerHTML = list.map(function (sub) {
-          return '<div class="bar-row">' +
-                   '<div class="bar-head">' +
-                     '<strong>' + UI.escape(sub.name) + '</strong>' +
-                     '<span class="tiny">' + sub.percent + '% · ' + sub.done + '/' + sub.total + '</span>' +
-                   '</div>' +
-                   '<div class="progress"><span style="width:' + sub.percent + '%"></span></div>' +
+        /* ====== أسبوع ====== */
+        const week = Statistics.weekActivity();
+        const maxCount = Math.max(1, Math.max.apply(null, week.map(function (d) { return d.count; })));
+        document.getElementById('weekGrid').innerHTML = week.map(function (d) {
+          const h = d.count === 0 ? 4 : Math.round((d.count / maxCount) * 100);
+          const active = d.count > 0 ? 'active' : '';
+          return '<div class="week-day ' + active + '">' +
+                   '<div class="week-bar-wrap"><div class="week-bar" style="height:' + h + '%"></div></div>' +
+                   '<span class="week-count">' + d.count + '</span>' +
+                   '<span class="week-label">' + d.weekday + '</span>' +
                  '</div>';
         }).join('');
-      }
 
-      renderBars('topSubjects',  s.top);
-      renderBars('weakSubjects', s.weak);
-      renderBars('allSubjects',  Statistics.subjectsSorted('top'));
+        const totalWeek = week.reduce(function (sum, d) { return sum + d.count; }, 0);
+        const activeDays = week.filter(function (d) { return d.count > 0; }).length;
+        document.getElementById('weekSummary').textContent =
+          activeDays + ' أيام نشاط هذا الأسبوع · ' + totalWeek + ' حدث';
 
-      Achievements.renderFull('#achievementsBlock');
+        /* ====== توصيات ====== */
+        document.getElementById('recsList').innerHTML = Statistics.recommendations().map(function (r) {
+          return '<div class="rec-row card"><span class="rec-ico">' + r.icon + '</span><span>' + UI.escape(r.text) + '</span></div>';
+        }).join('');
+
+        /* ====== شرائط المواد ====== */
+        function renderBars(id, list) {
+          const root = document.getElementById(id);
+          if (!list.length) { root.innerHTML = '<p class="tiny muted">لا توجد بيانات.</p>'; return; }
+          root.innerHTML = list.map(function (sub) {
+            return '<div class="bar-row">' +
+                     '<div class="bar-head">' +
+                       '<strong>' + UI.escape(sub.name) + '</strong>' +
+                       '<span class="tiny">' + sub.percent + '% · ' + sub.done + '/' + sub.total + '</span>' +
+                     '</div>' +
+                     '<div class="progress"><span style="width:' + sub.percent + '%"></span></div>' +
+                   '</div>';
+          }).join('');
+        }
+
+        renderBars('topSubjects',  s.top);
+        renderBars('weakSubjects', s.weak);
+        renderBars('allSubjects',  Statistics.subjectsSorted('top'));
+
+        Achievements.renderFull('#achievementsBlock');
+      })();
     })();
   </script>
 </body>
