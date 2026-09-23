@@ -8,34 +8,14 @@
   <link rel="icon" href="logo.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body data-page="index">
 
-  <!-- ============================================================
-       Loading Screen
-       ============================================================ -->
   <div id="loading" class="loading-screen">
-    <div class="loading-logo">
-      <img src="logo.png" alt="تقدّم" />
-    </div>
+    <div class="loading-logo"><img src="logo.png" alt="تقدّم" /></div>
     <div class="loading-spinner"></div>
     <p class="loading-text">جاري التحميل…</p>
   </div>
 
-  <!-- ============================================================
-       Offline Screen
-       ============================================================ -->
-  <div id="offline" class="offline-screen hidden">
-    <div class="offline-card">
-      <span class="offline-ico">📡</span>
-      <h2>لا يوجد اتصال بالإنترنت</h2>
-      <p>هذه المنصة تحتاج اتصالًا دائمًا لمزامنة تقدمك.</p>
-      <button class="btn primary" onclick="location.reload()">إعادة المحاولة</button>
-    </div>
-  </div>
-
-  <!-- ============================================================
-       Header
-       ============================================================ -->
   <header class="header">
     <div class="container header-inner">
       <a href="index.html" class="brand">
@@ -43,36 +23,55 @@
         <span>منصة تقدّم<small>مجتمع جيل 2011</small></span>
       </a>
       <div class="row">
+        <a href="https://www.instagram.com/taqaddom_/" target="_blank" rel="noopener"
+           class="icon-btn" title="إنستقرام" aria-label="إنستقرام">📷</a>
         <button class="icon-btn" data-theme-toggle type="button" aria-label="تبديل الوضع">🌙</button>
-        <a href="profile.html" class="icon-btn hidden" id="profileBtn" aria-label="حسابي">👤</a>
-        <a href="login.html" class="icon-btn" id="loginBtn" aria-label="تسجيل الدخول">↪</a>
+        <a href="dashboard.html" class="icon-btn" id="enterBtn" title="دخول" style="display:none">↪</a>
       </div>
     </div>
   </header>
 
-  <!-- ============================================================
-       Main
-       ============================================================ -->
   <main>
 
+    <!-- Hero -->
     <section class="hero">
-      <span class="hero-badge" id="heroBadge">📚 للصف العاشر — الفصل الأول</span>
+      <span class="hero-badge">📚 للصف العاشر — الفصل الأول</span>
       <h1>تقدّم بخطوة كل يوم</h1>
-      <p class="subtitle">منصّتك لتنظيم الدراسة، متابعة إنجاز المنهج، والتركيز على ما يهمّ فعلاً. مصمّمة لطلاب الصف العاشر — جيل 2011.</p>
+      <p class="subtitle">
+        منصّتك لتنظيم الدراسة، متابعة إنجاز المنهج، والتركيز على ما يهمّ فعلاً.
+        مصمّمة لطلاب الصف العاشر — جيل 2011.
+      </p>
 
       <div class="hero-actions" id="guestActions">
         <a href="login.html?mode=register" class="btn primary">ابدأ الآن</a>
         <a href="login.html" class="btn ghost">تسجيل الدخول</a>
-        <a href="#features" class="btn ghost">استكشف المنصة</a>
+        <a href="#about" class="btn ghost">استكشف المنصة</a>
       </div>
 
       <div class="hero-actions hidden" id="authActions">
         <a href="dashboard.html" class="btn primary">اذهب إلى الرئيسية →</a>
-        <a href="#features" class="btn ghost">استكشف المنصة</a>
+        <a href="#about" class="btn ghost">استكشف المنصة</a>
       </div>
     </section>
 
-    <section id="features" class="feature-grid">
+    <!-- التعريف -->
+    <section id="about" class="container section">
+      <div class="card about-brief">
+        <h2 class="mb-2">🎓 ما هي منصة تقدّم؟</h2>
+        <p class="muted mb-2">
+          منصة تقدّم هي أداة دراسية مبسّطة صُمّمت خصيصًا لطلاب الصف العاشر في الأردن —
+          لمساعدتك على متابعة إنجاز المنهج، ومعرفة أين وصلت في كل مادة،
+          والتركيز على ما تبقّى دون تشتّت.
+        </p>
+        <p class="muted mb-0">
+          لا تحتاج لتسجيل كل شيء يدويًا — المنصة تحسب تقدمك تلقائيًا،
+          تُلخّص لك وضعك، وتقترح عليك خطوتك التالية.
+        </p>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="feature-grid">
       <article class="feature">
         <div class="ico">📚</div>
         <h3>متابعة المنهج</h3>
@@ -89,49 +88,161 @@
         <p>Pomodoro واستراتيجيات عملية تساعدك على الدراسة بدون تشتت.</p>
       </article>
       <article class="feature">
-        <div class="ico">🏆</div>
-        <h3>إنجازات وأهداف</h3>
-        <p>أهداف يومية بسيطة، وسجل نشاط يذكّرك بما أنجزته.</p>
+        <div class="ico">📅</div>
+        <h3>امتحانات ومهام</h3>
+        <p>عدّاد تنازلي لامتحاناتك، وقائمة مهام يومية تنظّم يومك.</p>
       </article>
       <article class="feature">
-        <div class="ico">🛠️</div>
-        <h3>أدوات مساعدة</h3>
-        <p>روابط سريعة إلى NotebookLM وأدوات دراسية مفيدة.</p>
+        <div class="ico">📈</div>
+        <h3>معدلك وهدفك</h3>
+        <p>أدخل علاماتك، وحدّد هدفك، وشاهد فجوتك بوضوح.</p>
       </article>
       <article class="feature">
-        <div class="ico">💬</div>
-        <h3>مجتمع جيل 2011</h3>
-        <p>قناة Telegram للتواصل، الأسئلة، والمتابعة الجماعية.</p>
+        <div class="ico">☁️</div>
+        <h3>بياناتك في السحابة</h3>
+        <p>افتح المنصة من أي جهاز — وستجد كل شيء كما تركته.</p>
       </article>
     </section>
 
+    <!-- FAQ -->
+    <section class="container section">
+      <h2 class="mb-2">❓ الأسئلة الشائعة</h2>
+      <p class="muted mb-3">اضغط على أي سؤال لعرض الجواب.</p>
+
+      <div class="faq-list">
+
+        <details class="faq-item card">
+          <summary>
+            <span class="faq-ico">🎓</span>
+            شو هي منصة تقدّم؟
+          </summary>
+          <p>
+            منصة تقدّم هي أداة دراسية إلكترونية بسيطة، مصمّمة لمساعدة طالب الصف العاشر
+            على متابعة إنجاز المنهج، ومعرفة أين وصل في كل مادة، والتركيز على الدروس
+            المتبقية بدون تشتّت. تجمع لك حالتك الدراسية في مكان واحد وتُظهر لك خطوتك التالية.
+          </p>
+        </details>
+
+        <details class="faq-item card">
+          <summary>
+            <span class="faq-ico">👥</span>
+            مين بقدر يستخدم المنصة؟
+          </summary>
+          <p>
+            المنصة مفتوحة لأي طالب في الصف العاشر — الفصل الأول، ضمن المنهاج الأردني.
+            سواء كنت في بداية المنهج أو متقدّمًا فيه، ستستفيد منها لتنظيم دراستك
+            ومتابعة تقدّمك بوضوح.
+          </p>
+        </details>
+
+        <details class="faq-item card">
+          <summary>
+            <span class="faq-ico">🎯</span>
+            هل المنصة مخصصة لجيل 2011 فقط؟
+          </summary>
+          <p>
+            المنصة صُمّمت أساسًا لجيل 2011 (طلاب الصف العاشر الحاليين)،
+            لأن المنهج والفصل الدراسي مبنيان على هذه المرحلة.
+            لكن أي طالب في نفس الصف وبنفس المنهج يمكنه استخدامها بسهولة.
+          </p>
+        </details>
+
+        <details class="faq-item card">
+          <summary>
+            <span class="faq-ico">💰</span>
+            هل المنصة مجانية؟
+          </summary>
+          <p>
+            نعم — مجانية بالكامل، بدون اشتراكات ولا رسوم خفية.
+            هدفها خدمة الطالب، لا الربح.
+          </p>
+        </details>
+
+        <details class="faq-item card">
+          <summary>
+            <span class="faq-ico">🔐</span>
+            هل بحتاج أعمل حساب؟
+          </summary>
+          <p>
+            نعم — تحتاج حسابًا بسيطًا (بريد إلكتروني وكلمة مرور) لتتمكّن من متابعة تقدّمك.
+            الحساب يسمح لك بحفظ حالتك سحابيًا، فتدخل من أي جهاز وتجد كل شيء كما تركته.
+          </p>
+        </details>
+
+        <details class="faq-item card">
+          <summary>
+            <span class="faq-ico">📱</span>
+            هل المنصة بتشتغل على الموبايل؟
+          </summary>
+          <p>
+            نعم — المنصة مصمّمة بأسلوب "Mobile-first"،
+            فتعمل بسلاسة تامة على الجوال، مع قائمة عائمة أنيقة للتنقل السريع،
+            وتجربة مريحة للعين.
+          </p>
+        </details>
+
+        <details class="faq-item card">
+          <summary>
+            <span class="faq-ico">💻</span>
+            هل بقدر أستخدمها من الكمبيوتر؟
+          </summary>
+          <p>
+            أكيد — المنصة تعمل على الجوال، والتابلت، والكمبيوتر.
+            عند الدخول من أي جهاز بنفس الحساب، ستجد تقدّمك وملاحظاتك وكل شيء كما هو.
+          </p>
+        </details>
+
+        <details class="faq-item card">
+          <summary>
+            <span class="faq-ico">⬇️</span>
+            هل لازم أنزل تطبيق؟
+          </summary>
+          <p>
+            لا — المنصة تعمل مباشرة من المتصفح بدون أي تنزيل.
+            افتح الرابط، سجّل دخولك، وابدأ فورًا.
+            لا يحتاج جوالك مساحة، ولا يحتاج تحديثات.
+          </p>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- CTA -->
     <section class="container section" id="ctaSection">
       <div class="card cta-card">
         <h2 class="mb-1">جاهز تبدأ؟</h2>
         <p class="muted mb-2">أنشئ حسابك في ثوانٍ، وابدأ بتتبّع تقدمك في المنهج اليوم.</p>
-        <div class="row wrap" style="gap:10px">
+        <div class="row wrap" style="gap:10px; justify-content:center">
           <a href="login.html?mode=register" class="btn primary">إنشاء حساب</a>
           <a href="login.html" class="btn ghost">لديّ حساب بالفعل</a>
         </div>
       </div>
     </section>
+
+    <!-- تابعنا -->
+    <section class="container section">
+      <div class="card text-center">
+        <h2 class="mb-2">💬 تابعنا</h2>
+        <p class="muted mb-3">تابعنا على Instagram للاطلاع على آخر التحديثات والنصائح.</p>
+        <div class="row wrap" style="gap:10px; justify-content:center">
+          <a href="https://www.instagram.com/taqaddom_/" target="_blank" rel="noopener" class="btn primary">
+            📷 إنستقرام
+          </a>
+          <a href="https://t.me/grade10jjo" target="_blank" rel="noopener" class="btn ghost">
+            💬 Telegram
+          </a>
+        </div>
+      </div>
+    </section>
+
   </main>
 
-  <!-- ============================================================
-       Footer
-       ============================================================ -->
   <footer class="footer">
     <p>منصة تقدّم © <span id="year"></span> — مجتمع جيل 2011</p>
   </footer>
 
-  <!-- ============================================================
-       Firebase (first — type="module")
-       ============================================================ -->
   <script type="module" src="firebase.js"></script>
 
-  <!-- ============================================================
-       Core Scripts
-       ============================================================ -->
   <script src="data.js"></script>
   <script src="ui.js"></script>
   <script src="auth.js"></script>
@@ -141,67 +252,38 @@
   <script src="search.js"></script>
   <script src="statistics.js"></script>
   <script src="focus.js"></script>
+  <script src="exams.js"></script>
+  <script src="tasks.js"></script>
+  <script src="grades.js"></script>
   <script src="app.js"></script>
 
-  <!-- ============================================================
-       Page Script
-       ============================================================ -->
   <script>
     (function () {
       document.getElementById('year').textContent = new Date().getFullYear();
 
-      // مراقبة حالة تسجيل الدخول
-      function watchAuth() {
-        if (!window.FB || !window.FB.onAuthStateChanged) {
-          setTimeout(watchAuth, 100);
-          return;
-        }
+      (async function () {
+        try { await Auth.ready; } catch (e) {}
 
-        FB.onAuthStateChanged(FB.auth, function (user) {
-          const guestActions  = document.getElementById('guestActions');
-          const authActions   = document.getElementById('authActions');
-          const loginBtn      = document.getElementById('loginBtn');
-          const profileBtn    = document.getElementById('profileBtn');
-          const ctaSection    = document.getElementById('ctaSection');
-          const heroBadge     = document.getElementById('heroBadge');
+        const user = Auth.currentUser();
+        const guestActions = document.getElementById('guestActions');
+        const authActions  = document.getElementById('authActions');
+        const enterBtn     = document.getElementById('enterBtn');
+        const ctaSection   = document.getElementById('ctaSection');
 
-          if (user) {
-            guestActions.classList.add('hidden');
-            authActions.classList.remove('hidden');
-            loginBtn.classList.add('hidden');
-            profileBtn.classList.remove('hidden');
-            ctaSection.classList.add('hidden');
-            heroBadge.textContent = '👋 أهلاً بعودتك';
-          } else {
-            guestActions.classList.remove('hidden');
-            authActions.classList.add('hidden');
-            loginBtn.classList.remove('hidden');
-            profileBtn.classList.add('hidden');
-            ctaSection.classList.remove('hidden');
-            heroBadge.textContent = '📚 للصف العاشر — الفصل الأول';
-          }
-
-          // إخفاء شاشة التحميل
-          const loading = document.getElementById('loading');
-          if (loading) loading.classList.add('hidden');
-        });
-      }
-
-      watchAuth();
-
-      // فحص الاتصال بالإنترنت
-      function checkOnline() {
-        const offline = document.getElementById('offline');
-        if (!navigator.onLine) {
-          offline.classList.remove('hidden');
+        if (user) {
+          guestActions.classList.add('hidden');
+          authActions.classList.remove('hidden');
+          if (enterBtn) enterBtn.style.display = '';
+          if (ctaSection) ctaSection.classList.add('hidden');
         } else {
-          offline.classList.add('hidden');
+          guestActions.classList.remove('hidden');
+          authActions.classList.add('hidden');
+          if (enterBtn) enterBtn.style.display = 'none';
+          if (ctaSection) ctaSection.classList.remove('hidden');
         }
-      }
 
-      window.addEventListener('online', checkOnline);
-      window.addEventListener('offline', checkOnline);
-      checkOnline();
+        UI.hideLoading();
+      })();
     })();
   </script>
 </body>
